@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>图片绘制管理</title>
+	<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+	<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+	<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+	
+</head>
+<body>
+	<div id="tabsImg" class="easyui-tabs" fit="true" border="false">
+		<a id="a" class="easyui-linkbutton" plain="true" iconCls="icon-add"></a>
+	</div>
+	<script type="text/javascript">
+		$(function() {
+			$("#a").click(function() {
+				detectionImgManage();
+			})
+			
+			//使用正则表达式截取url地址参数
+			getQuery = function(ifmSrc, name) {
+				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+				var r = ifmSrc.substr(ifmSrc.indexOf("\?") + 1).match(reg);
+				if (r != null)
+					return unescape(r[2]);
+				return null;
+			};
+			debugger;
+			//获取传入参数id
+			var ifmSrc = $(window.parent.document).find("#ifm2").attr("src");
+			var projectId = getQuery(ifmSrc, "id");
+			if(projectId == null) {
+				$.messager.alert("系统提示", "系统异常，请稍后重试！");
+				return false;
+			};
+			//根据项目id查询绘制画图列表数据
+			$.ajax({
+				data : {
+					"projectId" : projectId
+				},
+				url : "/detection/manager/findDetectionByProjectId",
+				traditional : true,
+				dataType : "json",
+				type : 'POST',
+				success : function(result) {
+					if (result) {
+						debugger;
+						if(result.length<=0) {
+							detectionImgManage();
+						} else {
+							$.each(result, function(i, item) {
+								detectionImgUpdateManage(item.id, item.detectionName);
+							});
+						}
+					} else {
+						$.messager.alert("系统提示", result.errorInfo);
+					}
+				}
+			});
+			debugger;
+			function detectionImgManage() {
+				var content = "<iframe id='ifm' frameborder=0 scrolling='auto' style='width:100%;height:100%' src='./detectionImgManage.html?projectId="+projectId+"'></iframe>";
+				$("#tabsImg").tabs("add", {
+					title : "监控设置",
+					iconCls : "menu-11",
+					closable : true,
+					content : content
+				});
+			};
+			
+			function detectionImgUpdateManage(id, title) {
+				var content2 = "<iframe id='ifm' frameborder=0 scrolling='auto' style='width:100%;height:100%' src='./detectionImgUpdateManage.html?id=" + id + "'></iframe>";
+				$("#tabsImg").tabs("add", {
+					title : title,
+					iconCls : "menu-11",
+					closable : true,
+					content : content2
+				});
+			};
+
+			$('#tabsImg').tabs({
+				tabPosition : "left"
+			});
+		});
+	</script>
+</body>
+</html>

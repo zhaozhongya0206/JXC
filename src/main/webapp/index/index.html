@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>首页</title>
+<link rel="stylesheet" type="text/css" href="./styles.css"></link>
+<link rel="stylesheet" type="text/css" href="./monitor/demo.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/css/button.css"></link>
+<script type="text/javascript" src="./monitor/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="./monitor/webVideoCtrl.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+<style type="text/css">
+	.ax_default {
+	  font-family:'Arial Normal', 'Arial';
+	  font-weight:400;
+	  font-style:normal;
+	  font-size:16px;
+	  color:#333333;
+	  text-align:center;
+	  line-height:normal;
+	  color:#FFFFFF;
+	}
+	.father{
+	    width:100%;height:100%;position: relative;
+	}
+	.img_class {
+	  background-size:cover;
+	  text-decoration:none;
+	  text-align:center;
+	  height:28px;
+	  width:28px;
+	}
+	.disable_a {
+		cursor:default;
+		pointer-events:none;
+	}
+</style>
+</head>
+<body>
+	<div id="u24">
+		<img height="100%" width="100%" src="./images/u24.png" />
+		<div id="u25" style="visibility: visible; top: -5px;color: #FFFFFF; transform-origin: 420.5px 12px 0px;">
+		  <p><span>图&nbsp; 形&nbsp; 检&nbsp; 测&nbsp; 平&nbsp; 台 -- 主&nbsp; 屏&nbsp; 监&nbsp; 控&nbsp; 台</span></p>
+		</div>
+	</div>
+	<div id="u0_div">
+	   <div>
+	   		<!--  相机1 -->
+	        <div id="_div0" class="father" style="cursor: pointer;" onclick="playVideo(this)">
+		          <p>
+		          	<input type="text" id="xiangji0IP" name="xiangji0IP" style="display: none" />
+		          	<input type="text" id="xiangji0Post" name="xiangji0Post" style="display: none" />
+		          	<input type="text" id="xiangji0UserName" name="xiangji0UserName" style="display: none" />
+		          	<input type="text" id="xiangji0Password" name="xiangji0Password" style="display: none" />
+		          	<input type="text" id="photoCode0" name="photoCode0" style="display: none" />
+		          	<input type="text" id="file0" name="file0" style="display: none" />
+		          	<input type="text" id="codeType0" name="codeType0" style="display: none" />
+		          	<span id="xiangji0">无</span>
+		          </p>
+		          <div style="text-align: center;position: absolute;left: 50%;top: 30%;transform: translate(-50%,-50%);">
+		          	 <span id="projectName0" style="cursor: auto;">无</span>
+		          </div>
+		          <div style="text-align: center;position: absolute;left: 50%;top: 45%;transform: translate(-50%,-50%);">
+		          	 <span id="projectStatus0" style="cursor: auto;">无</span>
+		          </div>
+			      <div class="u12 ax_default" style="background:url(./u12.png);width:43px;height:50px;cursor: pointer;">
+		      	  	 <div style="text-align: center;position: absolute;left: 50%;top: 44%;transform: translate(-50%,-50%);">
+		      	   		<b id="totalCount0">0</b><input type="text" id="projectId0" name="projectId0" style="display: none" />
+		      	  	 </div>
+				  </div>
+				  <div class="bun">
+				  	<a href='javascript:void(0)' id="a_0_kaishi" class="disable_a" title='开  始' onclick='startProject(0);'><img id="img_0_kaishi" src='../img/kaishi_disable.png' class='img_class'/></a>
+				  	<a href='javascript:void(0)' id="a_0_zanting" class="disable_a" title='暂  停' onclick='stopProject(0);'><img id="img_0_zanting" src='../img/zanting_disable.png' class='img_class'/></a>
+					<a href='javascript:void(0)' id="a_0_jieshu" class="disable_a" title='结  束' onclick='discontinueProject(0);'><img id="img_0_jieshu" src='../img/jieshu_disable.png' class='img_class'/></a>
+					<a href='javascript:void(0)' id="a_0_shezhi" class="disable_a" title='设  置' onclick='setUpProject(0);'><img id="img_0_shezhi" src='../img/shezhi_disable.png' class='img_class'/></a>
+				  </div>
+			</div>
+			<!-- 相机2 -->
+			<div id="_div1" class="father" style="cursor: pointer;" onclick="playVideo(this)">
+				<p style="cursor: pointer;">
+					<input type="text" id="xiangji1IP" name="xiangji1IP" style="display: none" />
+		          	<input type="text" id="xiangji1Post" name="xiangji1Post" style="display: none" />
+		          	<input type="text" id="xiangji1UserName" name="xiangji1UserName" style="display: none" />
+		          	<input type="text" id="xiangji1Password" name="xiangji1Password" style="display: none" />
+		          	<input type="text" id="photoCode1" name="photoCode1" style="display: none" />
+		          	
+		          	<input type="text" id="file1" name="file1" style="display: none" />
+					<input type="text" id="codeType1" name="codeType1" style="display: none" />
+					<span id="xiangji1">无</span>
+				</p>
+				<div style="text-align: center;position: absolute;left: 50%;top: 30%;transform: translate(-50%,-50%);">
+					<span id="projectName1" style="cursor: auto;">无</span>
+				</div>
+				<div style="text-align: center;position: absolute;left: 50%;top: 45%;transform: translate(-50%,-50%);">
+		          	 <span id="projectStatus1" style="cursor: auto;">无</span>
+		        </div>
+			 	<div class="u12 ax_default" style="background:url(./u12.png);width:43px;height:50px;cursor: pointer;">
+		      		<div style="text-align: center;position: absolute;left: 50%;top: 45%;transform: translate(-50%,-50%);">
+		      			<b id="totalCount1">0</b><input type="text" id="projectId1" name="projectId1" style="display: none" />
+		      		</div>
+			  	</div>
+				<div class="bun">
+				  	<a href='javascript:void(0)'  id="a_1_kaishi" title='开  始' class="disable_a" onclick='startProject(1);'><img id="img_1_kaishi" src='../img/kaishi_disable.png' class='img_class'/></a>
+				  	<a href='javascript:void(0)'  id="a_1_zanting" title='暂  停' class="disable_a" onclick='stopProject(1);'><img id="img_1_zanting" src='../img/zanting_disable.png' class='img_class'/></a>
+					<a href='javascript:void(0)'  id="a_1_jieshu" title='结  束' class="disable_a" onclick='discontinueProject(1);'><img id="img_1_jieshu" src='../img/jieshu_disable.png' class='img_class'/></a>
+					<a href='javascript:void(0)'  id="a_1_shezhi" title='设  置' class="disable_a" onclick='setUpProject(1);'><img id="img_1_shezhi" src='../img/shezhi_disable.png' class='img_class'/></a>
+			    </div>
+			</div>
+			<!-- 相机3 -->
+			<div id="_div2" class="father" style="cursor: pointer;" onclick="playVideo(this)">
+				<p style="cursor: pointer;">
+					<input type="text" id="xiangji2IP" name="xiangji2IP" style="display: none" />
+		          	<input type="text" id="xiangji2Post" name="xiangji2Post" style="display: none" />
+		          	<input type="text" id="xiangji2UserName" name="xiangji2UserName" style="display: none" />
+		          	<input type="text" id="xiangji2Password" name="xiangji2Password" style="display: none" />
+		          	<input type="text" id="photoCode2" name="photoCode2" style="display: none" />
+					
+					<input type="text" id="file2" name="file2" style="display: none" />
+					<input type="text" id="codeType2" name="codeType2" style="display: none" />
+					<span id="xiangji2">无</span>
+				</p>
+				<div style="text-align: center;position: absolute;left: 50%;top: 30%;transform: translate(-50%,-50%);">
+					<span id="projectName2" style="cursor: auto;">无</span>
+				</div>
+				<div style="text-align: center;position: absolute;left: 50%;top: 45%;transform: translate(-50%,-50%);">
+		          	 <span id="projectStatus2" style="cursor: auto;">无</span>
+		        </div>
+	        	<div class="u12 ax_default" style="background:url(./u12.png);width:43px;height:50px;cursor: pointer;">
+		      		<div style="text-align: center;position: absolute;left: 50%;top: 45%;transform: translate(-50%,-50%);">
+		      			<b id="totalCount2">0</b><input type="text" id="projectId2" name="projectId2" style="display: none" />
+		      		</div>
+			  	</div>
+	        	<div class="bun">
+				  	<a href='javascript:void(0)'  id="a_2_kaishi" title='开  始' class="disable_a" onclick='startProject(2);'><img id="img_2_kaishi" src='../img/kaishi_disable.png' class='img_class'/></a>
+				  	<a href='javascript:void(0)'  id="a_2_zanting" title='暂  停' class="disable_a" onclick='stopProject(2);'><img id="img_2_zanting" src='../img/zanting_disable.png' class='img_class'/></a>
+					<a href='javascript:void(0)'  id="a_2_jieshu" title='结  束' class="disable_a" onclick='discontinueProject(2);'><img id="img_2_jieshu" src='../img/jieshu_disable.png' class='img_class'/></a>
+					<a href='javascript:void(0)'  id="a_2_shezhi" title='设  置' class="disable_a" onclick='setUpProject(2);'><img id="img_2_shezhi" src='../img/shezhi_disable.png' class='img_class'/></a>
+			    </div>
+	        </div>
+      		<!-- 相机4 -->
+			<div id="_div3" class="father" style="cursor: pointer;" onclick="playVideo(this)">
+				<p style="cursor: pointer;">
+					<input type="text" id="xiangji3IP" name="xiangji3IP" style="display: none" />
+		          	<input type="text" id="xiangji3Post" name="xiangji3Post" style="display: none" />
+		          	<input type="text" id="xiangji3UserName" name="xiangji3UserName" style="display: none" />
+		          	<input type="text" id="xiangji3Password" name="xiangji3Password" style="display: none" />
+		          	<input type="text" id="photoCode3" name="photoCode3" style="display: none" />
+		          	
+		          	<input type="text" id="file3" name="file3" style="display: none" />
+					<input type="text" id="codeType3" name="codeType3" style="display: none" />
+					<span id="xiangji3">无</span>
+				</p>
+				<div style="text-align: center;position: absolute;left: 50%;top: 30%;transform: translate(-50%,-50%);">
+					<span id="projectName3" style="cursor: auto;">无</span>
+				</div>
+				<div style="text-align: center;position: absolute;left: 50%;top: 45%;transform: translate(-50%,-50%);">
+		          	 <span id="projectStatus3" style="cursor: auto;">无</span>
+		        </div>
+				<div class="u12 ax_default" style="background:url(./u12.png);width:43px;height:50px;cursor: pointer;">
+		      		<div style="text-align: center;position: absolute;left: 51%;top: 45%;transform: translate(-50%,-50%);">
+		      			<b id="totalCount3">0</b><input type="text" id="projectId3" name="projectId3" style="display: none" />
+		      		</div>
+			  	</div>
+				<div class="bun">
+					<a href='javascript:void(0)'  id="a_3_kaishi" title='开  始' class="disable_a" onclick='startProject(3);'><img id="img_3_kaishi" src='../img/kaishi_disable.png' class='img_class'/></a>
+				  	<a href='javascript:void(0)'  id="a_3_zanting" title='暂  停' class="disable_a" onclick='stopProject(3);'><img id="img_3_zanting" src='../img/zanting_disable.png' class='img_class'/></a>
+					<a href='javascript:void(0)'  id="a_3_jieshu" title='结  束' class="disable_a" onclick='discontinueProject(3);'><img id="img_3_jieshu" src='../img/jieshu_disable.png' class='img_class'/></a>
+					<a href='javascript:void(0)'  id="a_3_shezhi" title='设  置' class="disable_a" onclick='setUpProject(3);'><img id="img_3_shezhi" src='../img/shezhi_disable.png' class='img_class'/></a>
+			    </div>
+			</div>
+		</div>
+	</div>
+	<!-- 分割线 -->
+	<div id="u22">
+		<!-- <img height="100%" width="100%" src="./images/u22.png"> -->
+	</div>
+	<div id="u4_div">
+		<b id="playVideo" style="font-family:微软雅黑;font-size:15px;">无</b>
+		<div id="divPlugin"></div>
+	</div>
+<script type="text/javascript">
+	var iWidth = null;
+	var count = null;
+	var iHeight = null;
+	var g_iWndIndex = null;
+	
+	$(function() {// 初始化内容
+		debugger;
+		iWidth = $("#u4_div").width();
+		var u24Height = $("#u24").height();//30
+		var u0_divHeight = $("#u0_div").innerHeight();//210
+		var u22Height = $("#u22").height();//20
+		count = u24Height+u0_divHeight+u22Height;
+		iHeight = document.documentElement.clientHeight;
+		
+		$.ajax({
+			url : "/admin/index/find",
+			traditional : true,
+			dataType : "json",
+			type : 'POST',
+			success : function(result) {
+				debugger;
+				if (result.success) {
+					initWebVideoCtrl();
+					for(var i=0; i<4; i++) {
+						if(result.list[i] != null) {
+							var projectName = result.list[i].projectName;
+							var photoName = result.list[i].photoName;
+							var photoIP = result.list[i].photoIP;
+							var photoPost = result.list[i].photoPost;
+							var photoUserName = result.list[i].photoUserName;
+							var photoPassword = result.list[i].photoPassword;
+							var photoCode = result.list[i].photoCode;
+							
+							var file = result.list[i].file;
+							var codeType = result.list[i].codeType;
+							if(result.list[i].projectId !=null) {
+								$("#totalCount"+i).html(result.mapCount[result.list[i].projectId]);
+								$("#projectId"+i).val(result.list[i].projectId);
+							}
+							//设置按钮是否可以点击
+							var projectFlag = result.list[i].projectFlag;
+							var projectFlagName = null;
+							//0未启用 浅黄色
+							if (projectFlag == "0") {
+								debugger;
+								projectFlagName = "未启用";
+								$("#img_"+i+"_kaishi").attr('src', "../img/kaishi.png");
+								$("#img_"+i+"_zanting").attr('src', "../img/zanting_disable.png");
+								$("#img_"+i+"_jieshu").attr('src', "../img/jieshu_disable.png");
+								$("#img_"+i+"_shezhi").attr('src', "../img/shezhi.png");
+								$("#a_"+i+"_kaishi").removeClass("disable_a");
+								$("#a_"+i+"_shezhi").removeClass("disable_a");
+							}
+							//1 开始  浅红色
+							if (projectFlag == "1") {
+								debugger;
+								projectFlagName = "进行中";
+								$("#img_"+i+"_kaishi").attr('src', "../img/kaishi_disable.png");
+								$("#img_"+i+"_zanting").attr('src', "../img/zanting.png");
+								$("#img_"+i+"_jieshu").attr('src', "../img/jieshu.png");
+								$("#img_"+i+"_shezhi").attr('src', "../img/shezhi_disable.png");
+								$("#a_"+i+"_zanting").removeClass("disable_a");
+								$("#a_"+i+"_jieshu").removeClass("disable_a");
+							}
+							//2 暂停 浅红色
+							if (projectFlag == "2") {
+								debugger;
+								projectFlagName = "暂停";
+								$("#img_"+i+"_kaishi").attr('src', "../img/kaishi.png");
+								$("#img_"+i+"_zanting").attr('src', "../img/zanting_disable.png");
+								$("#img_"+i+"_jieshu").attr('src', "../img/jieshu.png");
+								$("#img_"+i+"_shezhi").attr('src', "../img/shezhi.png");
+								$("#a_"+i+"_kaishi").removeClass("disable_a");
+								$("#a_"+i+"_jieshu").removeClass("disable_a");
+								$("#a_"+i+"_shezhi").removeClass("disable_a");
+							}
+							//3 结束 浅灰色
+							if (projectFlag == "3") {
+								debugger;
+								projectFlagName = "结束";
+								$("#img_"+i+"_kaishi").attr('src', "../img/kaishi_disable.png");
+								$("#img_"+i+"_zanting").attr('src', "../img/zanting_disable.png");
+								$("#img_"+i+"_jieshu").attr('src', "../img/jieshu_disable.png");
+								$("#img_"+i+"_shezhi").attr('src', "../img/shezhi_disable.png");
+							}
+							if(photoName !=null && projectName !=null && projectFlagName !=null) {
+								$("#xiangji"+i).html(photoName);
+								$("#xiangji"+i+"IP").val(photoIP);
+								$("#xiangji"+i+"Post").val(photoPost);
+								$("#xiangji"+i+"UserName").val(photoUserName);
+								$("#xiangji"+i+"Password").val(photoPassword);
+								$("#photoCode"+i).val(photoCode);
+								$("#projectName"+i).html(projectName);
+								$("#projectStatus"+i).html(projectFlagName);
+								
+								$("#file"+i).val(file);
+								$("#codeType"+i).val(codeType);
+							}
+							debugger;
+							//window.setTimeout(loginView(photoIP, photoPost, photoUserName, photoPassword), 3000);
+							//loginView(photoIP, photoPost, photoUserName, photoPassword);
+						}
+					}
+					//默认显示第一个
+					if(result.list[0] != null) {
+						debugger;
+						$("#_div0").css("border", "3px solid red");
+						$("#playVideo").html(result.list[0].photoName);
+						if(result.list[0].codeType == "H264文件流") {
+							$("#divPlugin").remove();
+							$("#u4_div").append('<video id="videoid" style="width:'+iWidth+'px; height:'+(iHeight-(count+40))+'px;" controls="controls"><source id="video_path" src="" type="video/mp4" /></video>');
+							// 自动播放
+							document.getElementById("videoid").src="video/"+result.list[0].file;
+							document.getElementById("videoid").play();
+						} else {
+							var iRet = WebVideoCtrl.I_CheckPluginInstall();
+							if(iRet == 0) {
+								var photoIp = result.list[0].photoIP;
+								// 开始预览
+								//window.setTimeout(startRealPlay(photoIp), 3000);
+						    	//initWebVideoCtrl();
+								loginView(photoIp, result.list[0].photoPost, result.list[0].photoUserName, result.list[0].photoPassword);
+							}
+						}
+					}
+				}
+			}
+		});
+		var jq = top.jQuery;
+		$("#u12Png").click(function(e){
+			debugger;
+			var projectId = $("#projectId0").val();
+			if(projectId) {
+				if (jq("#tabs").tabs('exists', "事件查询")) {
+					jq('#tabs').tabs('select', "事件查询");
+					//第一个参数传递this对象，第二个为传递的值
+					typeof window.top.reload_taskTab === 'function'
+					    && window.top.reload_taskTab.call(this, projectId);
+					return false;
+				};
+				var content="<iframe id='ifm' frameborder=0 scrolling='auto' style='width:100%;height:99%' src='/data/dataPlayVideo.html?projectId="+projectId+"'></iframe>";
+				jq("#tabs").tabs("add", {
+					title : "事件查询",
+					iconCls : "menu-14",
+					closable : true,
+					content : content
+				});
+			}
+		});
+		$("#u14Png").click(function(e){
+			debugger;
+			var projectId1 = $("#projectId1").val();
+			if(projectId1) {
+				if (jq("#tabs").tabs('exists', "事件查询")) {
+					jq('#tabs').tabs('select', "事件查询");
+					//第一个参数传递this对象，第二个为传递的值
+					typeof window.top.reload_taskTab === 'function'
+					    && window.top.reload_taskTab.call(this, projectId1);
+					return false;
+				};
+				var content="<iframe  id='ifm' frameborder=0 scrolling='auto' style='width:100%;height:99%' src='/data/dataPlayVideo.html?projectId="+projectId1+"'></iframe>";
+				jq("#tabs").tabs("add", {
+					title : "事件查询",
+					iconCls : "menu-14",
+					closable : true,
+					content : content
+				});
+			}
+		});
+		$("#u16Png").click(function(e){
+			debugger;
+			var projectId2 = $("#projectId2").val();
+			if(projectId2) {
+				if (jq("#tabs").tabs('exists', "事件查询")) {
+					jq('#tabs').tabs('select', "事件查询");
+					//第一个参数传递this对象，第二个为传递的值
+					typeof window.top.reload_taskTab === 'function'
+					    && window.top.reload_taskTab.call(this, projectId2);
+					return false;
+				};
+				var content="<iframe id='ifm' frameborder=0 scrolling='auto' style='width:100%;height:99%' src='/data/dataPlayVideo.html?projectId="+projectId2+"'></iframe>";
+				jq("#tabs").tabs("add", {
+					title : "事件查询",
+					iconCls : "menu-14",
+					closable : true,
+					content : content
+				});
+			}
+		});
+		$("#u18Png").click(function(e){
+			debugger;
+			var projectId3 = $("#projectId3").val();
+			if(projectId3) {
+				if (jq("#tabs").tabs('exists', "事件查询")) {
+					jq('#tabs').tabs('select', "事件查询");
+					//第一个参数传递this对象，第二个为传递的值
+					typeof window.top.reload_taskTab === 'function'
+					    && window.top.reload_taskTab.call(this, projectId3);
+					return false;
+				};
+				var content="<iframe id='ifm' frameborder=0 scrolling='auto' style='width:100%;height:99%' src='/data/dataPlayVideo.html?projectId="+projectId3+"'></iframe>";
+				jq("#tabs").tabs("add", {
+					title : "事件查询",
+					iconCls : "menu-14",
+					closable : true,
+					content : content
+				});
+			}
+		});
+	});
+	//选中视频事件
+	function playVideo($this) {
+		debugger;
+		$($this).css("border", "3px solid red");
+		$($this).siblings().each(function() {
+			$(this).css("border", "0px solid #2e3740");
+        });
+		$("#playVideo").html($($this).find("span").html());
+		
+		// 测试自动播放
+		var file = $($($this).find("input")[5]).val();
+		var codeType = $($($this).find("input")[6]).val();
+		if(codeType == "H264文件流") {
+			$("#divPlugin").remove();
+			$("#u4_div").append('<video id="videoid" style="width:'+iWidth+'px; height:'+(iHeight-(count+40))+'px;" controls="controls"><source id="video_path" src="" type="video/mp4" /></video>');
+			document.getElementById("videoid").src="video/"+file;
+		 	document.getElementById("videoid").play();
+		} else {
+			//相机登录展示
+			var photoIp = $($($this).find("input")[0]).val();
+			var playPhotoPost = $($($this).find("input")[1]).val();
+			var playPhotoUserName = $($($this).find("input")[2]).val();
+			var playPhotoPassword = $($($this).find("input")[3]).val();
+			if (photoIp && playPhotoPost && playPhotoUserName && playPhotoPassword) {
+				$("#videoid").remove();
+				// 开始预览
+				$("#divPlugin").remove();
+	    		$("#u4_div").append('<div id="divPlugin"></div>');
+		    	initWebVideoCtrl();
+				loginView(photoIp, playPhotoPost, playPhotoUserName, playPhotoPassword);
+			}
+		}
+	};
+	
+	function playVideoSelect(_index) {
+		var _div = $("#_div"+_index);
+		
+		_div.css("border", "3px solid red");
+		_div.siblings().each(function() {
+			$(this).css("border", "0px solid #2e3740");
+        });
+		$("#playVideo").html(_div.find("span").html());
+		// 测试自动播放
+		var file = $(_div.find("input")[5]).val();
+		var codeType = $(_div.find("input")[6]).val();
+		if(codeType == "H264文件流") {
+			$("#divPlugin").remove();
+			$("#u4_div").append('<video id="videoid" style="width:'+iWidth+'px; height:'+(iHeight-(count+40))+'px;" controls="controls"><source id="video_path" src="" type="video/mp4" /></video>');
+			document.getElementById("videoid").src="video/"+file;
+		 	document.getElementById("videoid").play();
+		} else {
+			//相机登录展示
+			var photoIp = $(_div.find("input")[0]).val();
+			var playPhotoPost = $(_div.find("input")[1]).val();
+			var playPhotoUserName = $(_div.find("input")[2]).val();
+			var playPhotoPassword = $(_div.find("input")[3]).val();
+			if (photoIp && playPhotoPost && playPhotoUserName && playPhotoPassword) {
+				$("#videoid").remove();
+				// 开始预览
+				$("#divPlugin").remove();
+	    		$("#u4_div").append('<div id="divPlugin"></div>');
+		    	initWebVideoCtrl();
+				loginView(photoIp, playPhotoPost, playPhotoUserName, playPhotoPassword);
+			}
+		}
+	};
+	
+	function initWebVideoCtrl() {
+		debugger;
+		// 检查插件是否已经安装过
+		var iRet = WebVideoCtrl.I_CheckPluginInstall();
+		if(iRet == 0) {
+			var oPlugin = {
+				iWidth : iWidth, // plugin width
+				iHeight : iHeight-(count+40) // plugin height
+			};
+			// 初始化插件参数及插入插件
+			WebVideoCtrl.I_InitPlugin(oPlugin.iWidth, oPlugin.iHeight, {
+				bWndFull : true,//是否支持单窗口双击全屏，默认支持 true:支持 false:不支持
+				iWndowType : 1,
+				cbSelWnd : function(xmlDoc) {
+					g_iWndIndex = parseInt($(xmlDoc).find("SelectWnd").eq(0).text(), 10);
+				}
+			});
+			var insert = WebVideoCtrl.I_InsertOBJECTPlugin("divPlugin");
+			// 检查插件是否最新
+			/* if (-1 == WebVideoCtrl.I_CheckPluginVersion()) {
+				alert("检测到新的插件版本，双击开发包目录里的WebComponentsKit.exe升级！");
+				return;
+			} */
+		}
+	};
+	//加载视频展示
+	function loginView(playPhotoIP, playPhotoPost, playPhotoUserName, playPhotoPassword) {
+		debugger;
+		var oLiveView = {
+			iProtocol : 1, // protocol 1：http, 2:https
+			szIP : playPhotoIP, // protocol ip
+			szPort : playPhotoPost, // protocol port
+			szUsername : playPhotoUserName, // device username
+			szPassword : playPhotoPassword, // device password
+			iStreamType : 1, // stream 1：main stream  2：sub-stream  3：third stream  4：transcode stream
+			iChannelID : 1, // channel no
+			bZeroChannel : false
+		};
+		WebVideoCtrl.I_Logout(oLiveView.szIP);
+		// 登录设备
+		var iRet = WebVideoCtrl.I_Login(oLiveView.szIP, oLiveView.iProtocol,
+				oLiveView.szPort, oLiveView.szUsername, oLiveView.szPassword, {
+					success : function(xmlDoc) {
+						debugger;
+						var i_Stop = WebVideoCtrl.I_Stop();
+						// 开始预览
+						var startRealPlay = WebVideoCtrl.I_StartRealPlay(oLiveView.szIP, {
+							iStreamType : oLiveView.iStreamType,
+							iChannelID : oLiveView.iChannelID,
+							bZeroChannel : oLiveView.bZeroChannel
+						});
+					}
+		});
+		window.setTimeout(function() {
+			if (-1 == iRet) {
+				var i_Stop = WebVideoCtrl.I_Stop();
+				if(i_Stop == 0){
+					var startRealPlay = WebVideoCtrl.I_StartRealPlay(oLiveView.szIP, {
+						iStreamType : oLiveView.iStreamType,
+						iChannelID : oLiveView.iChannelID,
+						bZeroChannel : oLiveView.bZeroChannel
+					});
+				}
+			}
+		}, 2000);
+	};
+	//跳转“开始”页面
+	function startProject(_index) {
+		debugger;
+		var id = $("#projectId"+_index).val();
+		var photoCode = $("#photoCode"+_index).val();
+		if (id && photoCode) {
+			$.ajax({
+				data : {
+					id : id,
+					projectFlag : 1
+				},
+				url : "/project/manager/updateFlag",
+				dataType : "json",
+				type : 'POST',
+				success : function(result) {
+					debugger;
+					if (result.success) {
+						//window.location.reload();
+						debugger;
+						var projectFlagName = "进行中";
+						$("#img_"+_index+"_kaishi").attr('src', "../img/kaishi_disable.png");
+						$("#img_"+_index+"_zanting").attr('src', "../img/zanting.png");
+						$("#img_"+_index+"_jieshu").attr('src', "../img/jieshu.png");
+						$("#img_"+_index+"_shezhi").attr('src', "../img/shezhi_disable.png");
+						$("#a_"+_index+"_zanting").removeClass("disable_a");
+						$("#a_"+_index+"_jieshu").removeClass("disable_a");
+						$("#projectStatus"+_index).html(projectFlagName);
+						playVideoSelect(_index);
+						messagerShow();
+					} else {
+						$.messager.alert("系统提示", result.errorInfo);
+					}
+				}
+			});
+		} else {
+			$.messager.alert("系统提示", "系统异常，请稍后重试！");
+			return false;
+		}
+	};
+	//跳转“暂停”页面
+	function stopProject(_index) {
+		debugger;
+		var id = $("#projectId"+_index).val();
+		if (id) {
+			$.ajax({
+				data : {
+					id : id,
+					projectFlag : 2
+				},
+				url : "/project/manager/updateFlag",
+				dataType : "json",
+				type : 'POST',
+				success : function(result) {
+					if (result.success) {
+						//window.location.reload();
+						var projectFlagName = "暂停";
+						$("#img_"+_index+"_kaishi").attr('src', "../img/kaishi.png");
+						$("#img_"+_index+"_zanting").attr('src', "../img/zanting_disable.png");
+						$("#img_"+_index+"_jieshu").attr('src', "../img/jieshu.png");
+						$("#img_"+_index+"_shezhi").attr('src', "../img/shezhi.png");
+						$("#a_"+_index+"_kaishi").removeClass("disable_a");
+						$("#a_"+_index+"_jieshu").removeClass("disable_a");
+						$("#a_"+_index+"_shezhi").removeClass("disable_a");
+						$("#projectStatus"+_index).html(projectFlagName);
+						playVideoSelect(_index);
+						messagerShow();
+					} else {
+						$.messager.alert("系统提示", result.errorInfo);
+					}
+				}
+			});
+		} else {
+			$.messager.alert("系统提示", "系统异常，请稍后重试！");
+			return false;
+		}
+	};
+	//跳转“结束”页面
+	function discontinueProject(_index) {
+		debugger;
+		var id = $("#projectId"+_index).val();
+		var photoCode = $("#photoCode"+_index).val();
+		if (id) {
+			$.messager.confirm("系统提示", "该条目一旦被结束后无法再被激活？", function(r) {
+				if (r) {
+					debugger;
+					$.ajax({
+						data : {
+							id : id,
+							projectFlag : 3
+						},
+						url : "/project/manager/updateFlag",
+						dataType : "json",
+						type : 'POST',
+						success : function(result) {
+							if (result.success) {
+								//window.location.reload();
+								debugger;
+								var projectFlagName = "结束";
+								$("#img_"+_index+"_kaishi").attr('src', "../img/kaishi_disable.png");
+								$("#img_"+_index+"_zanting").attr('src', "../img/zanting_disable.png");
+								$("#img_"+_index+"_jieshu").attr('src', "../img/jieshu_disable.png");
+								$("#img_"+_index+"_shezhi").attr('src', "../img/shezhi_disable.png");
+								$("#projectStatus"+_index).html(projectFlagName);
+								playVideoSelect(_index);
+								messagerShow();
+							} else {
+								$.messager.alert("系统提示", result.errorInfo);
+							}
+						}
+					});
+				}
+			});
+		} else {
+			$.messager.alert("系统提示", "系统异常，请稍后重试！");
+			return false;
+		}
+	};
+	//设置按钮跳转页面
+	function setUpProject(_index) {
+		debugger;
+		var id = $("#projectId"+_index).val();
+		var photoCode = $("#photoCode"+_index).val();
+		
+		if(id && photoCode) {
+			var jq = top.jQuery;
+			if (jq("#tabs").tabs('exists', "监控设置")) {
+				var jq = top.jQuery;
+				//关闭已打开页面
+				jq('#tabs').tabs('close', "监控设置");
+				//return false;
+			}
+			var content2 = "<iframe id='ifm2' frameborder=0 scrolling='auto' style='width:100%;height:100%' src='/detection/detectionImgUpdateManage.html?id="+id+"&photoCode="+photoCode+"'></iframe>";
+			jq("#tabs").tabs("add", {
+				title : "监控设置",
+				iconCls : "menu-11",
+				closable : true,
+				content : content2
+			});
+		} else {
+			$.messager.alert("系统提示", "系统异常，请稍后重试！");
+			return false;
+		}
+	};
+
+	function messagerShow() {
+		$.messager.show({
+			title:'系统提示',
+			msg:'操作成功！',
+			showType:'slide',
+			width:200,
+			height:80,
+			timeout:3000,
+			style:{
+				right:'',
+				top:document.body.scrollTop+document.documentElement.scrollTop,
+				bottom:'',
+			}
+		});
+	};
+</script>
+</body>
+</html>

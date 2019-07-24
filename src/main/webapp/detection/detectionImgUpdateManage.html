@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>监控设置修改</title> 
+</head>
+<body>
+    <!-- <h1>画板</h1> -->
+    <div class="container">
+     	<div class="row">
+	    	<form id="fm" method="post">
+				<table cellspacing="0px" style="margin:auto;">
+					<tr>
+						<br/>
+						<td>相机名称：
+							<input type="text" id="photoCode" name="photoCode" style="display: none"/>
+							<input type="text" id="photoName" name="photoName" class="easyui-validatebox" readonly="true" required="true"/>
+							<br/>
+							<br/>
+						</td>
+					</tr>
+					<tr>
+						<td>流程主题：
+							<input type="text" id="projectName" name="projectName" class="easyui-validatebox" readonly="true" required="true"/>
+							<br/>
+							<br/>
+						</td>
+					</tr>
+					<tr>
+						<td>检测编号：
+							<input type="text" id="detectionCode" name="detectionCode" readonly="true" class="easyui-validatebox" required="true" />
+							<br/>
+							<br/>
+						</td>
+					</tr>
+					<tr>
+						<td>检测名称：
+							<input id="detectionNameCombo" class="easyui-validatebox" /><!-- editable="false" -->
+							<br/>
+							<br/>
+						</td>
+					</tr>
+					<tr>
+						<td>设置日期：
+							<input type="text" id="createTime" readonly="true" />
+							<br/>
+							<br/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<ul class="type">
+								<div class="get_class">获取画面</div>
+				            </ul>
+							<input id="videoSet1" type="radio" name="detectionType" style="width: 20px" value="1" ></input><label for="videoSet1">运动</label>
+	            			<input id="videoSet2" type="radio" name="detectionType" style="width: 20px" value="2"></input><label for="videoSet2">数字识别</label>
+	            			<input id="videoSet3" type="radio" name="detectionType" style="width: 20px" value="3"></input><label for="videoSet3">颜色</label>
+							<br/>
+							<br/>
+						</td>
+					</tr>
+				</table>
+			</form>
+		<!-- </div>
+        <div class="row"> -->
+            <ul name="" class="type">
+                <!-- <li class="line typeactive" data="line">直&nbsp;&nbsp;&nbsp;线</li> -->
+                <li class="rect typeactive" data="rect">矩&nbsp;&nbsp;&nbsp;形</li>
+                <!-- <li class="circle" data="circle">圆&nbsp;&nbsp;&nbsp;圈</li> -->
+                <!-- <li class="pen" data="pen">铅&nbsp;&nbsp;&nbsp;笔</li>
+                <li class="poly" data="poly">多&nbsp;边&nbsp;形
+                    <div class="bian"><span>边数</span><input type="number" name="number" min="3" value="3" max="15"></div>
+                </li> -->
+            </ul>
+            <div class="box" style="display:none;"><span>颜色</span></label><input type="color" name="color" value="#ff0000"></div>
+            <div class="box linewidth" style="display:none;"><span>线宽</span><input type="number" name="number" value="1" max="150" min="1"></div>
+            <div class="space" style="display:none;"></div>
+            <div class="create shezhi" style="display:none;">新&nbsp;&nbsp;&nbsp;建
+                <div class="xinjian">
+                    <h6>画 板 尺 寸</h6>
+                    <div class="xinjian_width">
+                        <span>宽</span>
+                        <input type="number" max="1070" min="500" value="500">
+                    </div>
+                    <div class="xinjian_height">
+                        <span>高</span>
+                        <input type="number" max="648" min="300" value="300">
+                    </div>
+                    <input type="button" name="queding" value="确定" id="ding">
+                    <div class="xinjian_before">+</div>
+                </div>
+            </div>
+            <div class="back shezhi">删&nbsp;&nbsp;&nbsp;除</div>
+            <div class="save shezhi">保&nbsp;&nbsp;&nbsp;存</div>
+            <div class="close shezhi">关&nbsp;&nbsp;&nbsp;闭</div>
+        </div>
+        <b style="color: red;font-family: 微软雅黑;font-size: 15px;">
+                  &nbsp;&nbsp;&nbsp;&nbsp;系统提示：<br/>
+                  &nbsp;&nbsp;&nbsp;&nbsp;请在当前页面操作完成后再进行关闭。
+        </b>
+    </div>
+	<canvas id="canvas">
+		您的浏览器不支持canvas标签，请您更换浏览器！
+	</canvas>
+</body>
+<link rel="stylesheet" type="text/css" href="./css/detectionImgManage.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/css/button.css"></link>
+<script src="./js/detectionImgManage.js"></script>
+<!-- <script src="./js/jquery-1.10.2.js"></script> -->
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/static/js/date.js"></script>
+<script>
+window.onload = function() {
+	debugger;
+	//使用正则表达式截取url地址参数
+	getQuery = function(ifmSrc, name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+		var r = ifmSrc.substr(ifmSrc.indexOf("\?") + 1).match(reg);
+		if (r != null)
+			return unescape(r[2]);
+		return null;
+	};
+	debugger;
+	//获取传入参数id
+	var ifmSrc = $(window.parent.document).find("#ifm2").attr("src");
+	var projectId = getQuery(ifmSrc, "id");
+	var photoCode = getQuery(ifmSrc, "photoCode");
+	if(!projectId && !photoCode) {
+		$.messager.alert("系统提示", "系统异常，请稍后重试！");
+		return false;
+	};
+	
+	var screenWidth = document.documentElement.clientWidth;
+	var screenHeight = document.documentElement.clientHeight;
+	var container=$(".container");
+	//获取canvas对象
+    var canvas=document.querySelector("canvas");
+    var width=screenWidth-295;
+    var height=screenHeight-15;
+    canvas.width=width;
+    canvas.height=height;
+    var obj=canvas.getContext("2d");
+    var timestamp=new Date().getTime();
+	// 创建img对象
+	var img = document.createElement('img');
+	// 设置src值
+	var ImgObj = new Image(); //判断图片是否存在
+	ImgObj.src = "./"+photoCode+".png?"+timestamp;
+	ImgObj.onload=function(){
+    	console.log(ImgObj.width, ImgObj.height);
+    	img.src = encodeURI("./"+photoCode+".png?")+timestamp;
+	}
+	ImgObj.onerror=function(){
+    	console.log('error');
+    	img.src = encodeURI("./drawImg.png")+"?"+timestamp;
+	}
+	//设置canvas属性	
+	img.onload = function () {
+		canvas.style.backgroundImage = 'url("' + img.src + '")';//改动这行
+	
+    var typechoose=$(".type li");
+    var stylechoose=$(".style li");
+    var colorchoose=document.querySelector("input[type=color]");
+    var widthchoose=document.querySelector(".linewidth input[type=number]");
+    var canvasWidth=document.querySelector(".xinjian_width input[type=number]");
+    var canvasHeight=document.querySelector(".xinjian_height input[type=number]");
+    canvasWidth.value=width;canvasHeight.value=height;
+    canvasWidth.max=screenWidth-295;canvasHeight.max=screenHeight-15;
+    var ding=document.querySelector("#ding");
+    var poly=$(".poly");
+    var bian=$(".bian");
+    var polychoose=$(".bian input");
+    var shezhi=$(".shezhi");
+    var back=$(".back");
+    var save=$(".save");
+    var create=$(".create");
+    var xinjian=$(".xinjian");
+    var close=$(".close");
+    var create_close=$(".xinjian_before");
+    var color="#ff0000";
+    //var type="line";
+    var type="rect";
+    var n=3;
+    var linewidth="1";
+    var style="stroke";
+    var arr=[];
+    
+    var listX = [];//用于保存画图X坐标
+	var listY = [];//用于保存画图Y坐标
+	var listWidth = [];//用于保存画图宽度坐标
+	var listHeight = [];//用于保存画图高度坐标
+    var listType = [];//用于保存绘制类型
+    var listId = [];//保存id
+    
+    //展示使用
+    var listViewX = [];//用于保存画图X坐标
+	var listViewY = [];//用于保存画图Y坐标
+	var listViewWidth = [];//用于保存画图宽度坐标
+	var listViewHeight = [];//用于保存画图高度坐标
+    var listViewType = [];//用于保存绘制类型
+    var listViewId =[];//用于保存id
+    
+    //关闭页面开关
+    var closeButtonBool=true;
+    $(".fill").css({display:"none"});
+    // 多边形
+    poly.hover(function(){
+        bian.fadeIn();
+    },function(){
+        bian.fadeOut();
+    })
+    // 绘制形状
+    typechoose.each(function(index,ele){
+        $(ele).click(function(){
+            typechoose.removeClass("typeactive");
+            $(this).toggleClass("typeactive");
+            type=$(this).attr("data");
+            if($(this).is(".line")||$(this).is(".pen")){
+                style="stroke";
+                $(".stroke").addClass("styleactive");
+                $(".fill").css({display:"none"}).removeClass("styleactive");
+            }else{
+                $(".fill").css({display:"block"});
+            }
+        })
+    })
+    // 设置
+    shezhi.each(function(index,ele){
+        if($(ele).is(".cut")||$(ele).is(".copy")){
+            return;
+        }else{
+            $(ele).click(function(){
+                $(this).css({color:"#5bd219",backgroundColor:"#fff"}).animate({opacity:0.99},200,function(){
+                    $(this).css({color:"#fff",backgroundColor:"#5bd219",opacity:1});
+                });
+            })
+        }
+    })
+    // 保存
+	save.click(function() {
+		debugger;
+		if (listX.length > 0 && listY.length > 0 && listWidth.length > 0 
+				&& listHeight.length > 0 && listType.length > 0 && listId.length>0) {
+			//防止重复保存操作
+			saveDetectionImg(listX[0],listY[0],listWidth[0],listHeight[0],listType[0],listId[0]);
+			return false;
+		} else if (listX.length > 0 && listY.length > 0 && listWidth.length > 0 
+				&& listHeight.length > 0 && listType.length > 0){
+			saveDetectionImg(listX[0],listY[0],listWidth[0],listHeight[0],listType[0]);
+		} else {
+			$.messager.alert("温馨提示", "请进行绘制图形！");
+		}
+    })
+    function saveDetectionImg(leftX, leftY, widthDraw, heightDraw, typeDraw, id) {
+    	debugger;
+    	if ($("#fm").form("validate")) {
+			$.ajax({
+				data : {
+					"photoCode" : $("#photoCode").val(),
+					"photoName" : $("#photoName").val(),
+					"projectName" : $("#projectName").val(),
+					"detectionCode" : $("#detectionCode").val(),
+					"detectionName" : $("#detectionNameCombo").combobox('getValue'),
+					"detectionType" : $("input[type='radio']:checked").val(),
+					"detectionLeftx" : leftX,
+					"detectionLefty" : leftY,
+					"detectionWidth" : widthDraw,
+					"detectionHeight" : heightDraw,
+					"type" : typeDraw,
+					"projectId" : projectId,
+					"canvasWidth" : width + "",
+					"canvasHeight" : height + "",
+					"id" : id
+				},
+				url : "/detection/manager/saveImg",
+				traditional : true,
+				dataType : "json",
+				type : 'POST',
+				success : function(result) {
+					debugger;
+					if (result.success) {
+						listId.pop();
+						listId.push(result.detectionManager.id);
+						//选中当前记录
+						debugger;
+						$('#detectionNameCombo').combobox({
+						    url:'/detection/manager/comboList?projectId='+projectId,
+						    valueField: 'detectionName',
+						    textField: 'detectionName',
+						    panelHeight: 'auto',
+						    required: true,
+						    formatter: function(row) {
+								return '<span style="font-family:微软雅黑;font-size:14px;">' + row.detectionName + '</span>';
+							},
+							onLoadSuccess: function() {
+						    	debugger;
+						    	$('#detectionNameCombo').combobox('select', result.detectionManager.detectionName);
+								$.messager.alert("系统提示", "操作成功！");
+								closeButtonBool=false;
+						    }
+						});
+					} else {
+						$.messager.alert("系统提示", result.errorInfo);
+						return false;
+					}
+				}
+			});
+		}
+    }
+    // 关闭页面
+    close.click(function(){
+    	debugger;
+    	var jq = top.jQuery;
+		var currTab = jq("#tabs").tabs('getSelected');
+		currTitle = currTab.panel('options').title;
+    	//如果存在数据判断是否需要保存
+		//if (closeButtonBool) {
+			$.messager.confirm("系统提示", "请确认保存后再关闭，是否继续？", function(r) {
+				if (r) {
+					/* if(listId.length>0) {
+						//防止重复保存操作
+						saveDetectionImg(listX[0],listY[0],listWidth[0],listHeight[0],listType[0],listId[0]);
+					} else {
+						saveDetectionImg(listX[0],listY[0],listWidth[0],listHeight[0],listType[0]);
+					} */
+					jq('#tabs').tabs('close', currTitle);
+					return false;
+				} else {
+					//jq('#tabs').tabs('close', currTitle);
+					return false;
+				}
+			});
+		//} else {
+			//jq('#tabs').tabs('close', currTitle);
+		//}
+    })
+    // 新建画布
+    create.click(function(){
+        xinjian.fadeIn();
+    })
+    create_close.click(function(e){
+        e.stopPropagation()
+        xinjian.fadeOut();
+    })
+    canvasWidth.onblur=function(){
+        if(this.value<=this.min){
+            this.value=this.min;
+        }
+        if(this.value>=screenWidth-295){
+            this.value=screenWidth-295;
+        }
+        width=this.value;
+    }
+    canvasHeight.onblur=function(){
+        if(this.value<=this.min){
+            this.value=this.min;
+        }
+        if(this.value>=screenHeight-15){
+            this.value=screenHeight-15;
+        }
+        height=this.value;
+    }
+    ding.onclick=function(e){
+        canvas.width=width;
+        canvas.height=height;
+        canvas.style.left=(screenWidth+295-canvas.width)/2+"px";
+        canvas.style.top=(screenHeight-5-canvas.height)/2+"px";
+        arr=[];
+        obj.clearRect(0,0,width,height);
+        e.stopPropagation()
+        xinjian.fadeOut();
+    }
+    // 颜色选择
+    colorchoose.onchange=function(){
+        color=this.value;
+    }
+    // 粗细改变
+    widthchoose.onchange=function(){
+        linewidth=this.value;
+    }
+    //多边形边数
+    polychoose.change(function(){
+        n=this.value;
+    })
+    // 删除
+    back.click(function(){
+    	debugger;
+    	if(listId.length > 0) {
+    		$.messager.confirm("系统提示", "是否删除该数据？", function(r) {
+				if (r) {
+			    	var deleteId = listId.pop();
+			    	arr.pop();
+			        obj.clearRect(0,0,width,height);
+			        /* if(arr.length>0){
+			            obj.putImageData(arr[arr.length-1],0,0,0,0,width,height);
+			        } */
+			        listX.pop();
+			        listY.pop();
+			        listWidth.pop();
+			        listHeight.pop();
+			        listType.pop();
+			        $.ajax({
+						data : {
+							"ids" : deleteId
+						},
+						url : "/detection/manager/delete",
+						traditional : true,
+						dataType : "json",
+						type : 'POST',
+						success : function(result) {
+							if (result) {
+								debugger;
+								//$.messager.alert("系统提示", "操作成功！");
+								//重新刷新展示
+								//findDetectionByProjectId();
+								detectionCombobox();
+							} else {
+								$.messager.alert("系统提示", result.errorInfo);
+							}
+						}
+					});
+				}
+    		});
+        } else {
+        	//findDetectionByProjectId();
+        	//$.messager.alert("系统提示", "操作成功！");
+        }
+    })
+    
+    var x, y, w, h;
+	canvas.onmousedown = function(e) {
+		debugger;
+		if(!$("#detectionNameCombo").combobox('getValue') || $("#detectionNameCombo").combobox('getValue') == '新增检测目标') {
+			$.messager.alert("系统提示", "请先修改检测名称！");
+			return false;
+		}
+		var rect = canvas.getBoundingClientRect();
+		x = e.clientX - rect.left * (canvas.width / rect.width);
+		y = e.clientY - rect.top * (canvas.height / rect.height);
+		//获取事件在canvas中发生的位置
+		if (type == "pen") {
+			obj.beginPath();
+			obj.moveTo(x, y);
+		}
+		var draw = new Draw(obj, {type : style,color : color,width : linewidth});//实例化构造函数
+		onmousedownBool = false;
+		canvas.onmousemove = function(e) {
+			//如果存在数据则删除***********************
+			if (listX.length > 0 && listY.length > 0 && listWidth.length > 0 
+					&& listHeight.length > 0 && listType.length > 0) {
+				arr.pop();
+		        obj.clearRect(0,0,width,height);
+		        /* if(arr.length>0) {
+		            obj.putImageData(arr[arr.length-1],0,0,0,0,width,height);
+		        } */
+		        listX.pop();
+		        listY.pop();
+		        listWidth.pop();
+		        listHeight.pop();
+		        listType.pop();
+		        getListView();
+			}
+			var rect = canvas.getBoundingClientRect();
+			w = e.clientX - rect.left * (canvas.width / rect.width);
+			h = e.clientY - rect.top * (canvas.height / rect.height);
+			obj.clearRect(0, 0, width, height);
+			getListView();
+			/* if (arr.length != 0) {
+				obj.putImageData(arr[arr.length - 1], 0, 0, 0, 0, width, height);
+			} */
+			if (type == "poly") {
+				draw[type](x, y, w, h, n);
+			} else {
+				draw[type](x, y, w, h);
+			}
+		}
+		document.onmouseup = function() {
+			canvas.onmousemove = null;
+			document.onmouseup = null;
+			arr.push(obj.getImageData(0, 0, width, height));
+			listX.push(x);//添加X坐标
+			listY.push(y);//添加Y坐标
+			listWidth.push(w);//添加width坐标
+			listHeight.push(h);//添加height坐标
+			listType.push(type);//添加类型type
+		}
+	}
+	function getListView() {
+		if(listViewX != null && listViewX.length > 0) {
+			for(var j=0;j<listViewX.length;j++) {
+				var x = listViewX[j];
+				var y = listViewY[j];
+				var w = listViewWidth[j];
+				var h = listViewHeight[j];
+				var type = listViewType[j];
+				var draw = new Draw(obj,{type:style,color:color,width:linewidth});//实例化构造函数
+		        draw[type](x,y,w,h);
+			}
+		}
+	}
+	//初始化form表单
+	$("#fm").form('clear');
+	initForm();
+	$('#detectionNameCombo').combobox({
+	    url:'/detection/manager/comboList?projectId='+projectId,
+	    valueField: 'detectionName',
+	    textField: 'detectionName',
+	    panelHeight: 'auto',
+	    required: true,
+	    formatter: function(row) {
+			return '<span style="font-family:微软雅黑;font-size:14px;">' + row.detectionName + '</span>';
+		},
+		onLoadSuccess: function() {
+	    	debugger;
+			var data = $('#detectionNameCombo').combobox('getData');
+	        if (data && data.length > 0) {
+	        	$('#detectionNameCombo').combobox('select', data[0].detectionName);
+	        }
+	    },
+	    onSelect: function(rec) {
+	    	debugger;
+	    	//如果存在数据判断是否需要保存
+			/* if (listX.length > 0 && listY.length > 0 && listWidth.length > 0 
+					&& listHeight.length > 0 && listType.length > 0) {
+				$.messager.confirm("系统提示", "是否需要保存监测目标的修改？", function(r) {
+					if (r) {
+						if(listId.length>0) {
+							//防止重复保存操作
+							saveDetectionImg(listX[0],listY[0],listWidth[0],listHeight[0],listType[0],listId[0]);
+						} else {
+							saveDetectionImg(listX[0],listY[0],listWidth[0],listHeight[0],listType[0]);
+						}
+						return false;
+					}
+				});
+			} */
+	    	if(rec.id) {
+	    		//先查出所有已绘制图形
+	    		findDetectionById(rec.id);
+	    	} else {
+	    		obj.clearRect(0,0,width,height);
+	    		listId = [];
+	    		initForm();
+	    		findDetectionByProjectId();
+	    	}
+	   	}
+	});
+	function findDetectionById(detectionId) {
+		//先查出所有已绘制图形
+		if(detectionId) {
+			$.ajax({
+				data : {
+					"projectId" : projectId
+				},
+				url : "/detection/manager/findDetectionByProjectId",
+				traditional : true,
+				dataType : "json",
+				type : 'POST',
+				success : function(result) {
+					if (result) {
+						listViewX = [];
+						listViewY = [];
+						listViewWidth = [];
+						listViewHeight = [];
+						listViewType = [];
+						obj.clearRect(0,0,width,height);
+						for(var j=0;j<result.length;j++) {
+							var x = result[j].detectionLeftx;
+							var y = result[j].detectionLefty;
+							var w = result[j].detectionWidth;
+							var h = result[j].detectionHeight;
+							var type = result[j].type;
+							//用于展示使用
+							listViewX.push(x);
+					        listViewY.push(y);
+					        listViewWidth.push(w);
+					        listViewHeight.push(h);
+					        listViewType.push(type);
+							var draw = null;
+							if(result[j].id == detectionId) {
+								debugger;
+								//先清空
+	    				        listX = [];
+	    				        listY = [];
+	    				        listWidth = [];
+	    				        listHeight = [];
+	    				        listType = [];
+	    				        listId = [];
+	    				        //设置画图颜色
+	    				        var gradient=obj.createLinearGradient(x,y,w,h);
+	    				        gradient.addColorStop("0","magenta");
+	    				        gradient.addColorStop("0.5","blue");
+	    				        gradient.addColorStop("1","red");
+								draw = new Draw(obj,{type:style,color:gradient,width:"3.5"});//实例化构造函数
+								arr.push(obj.getImageData(0,0,width,height));
+	    				        listX.push(x);//添加X坐标
+	    						listY.push(y);//添加Y坐标
+	    						listWidth.push(w);//添加width坐标
+	    						listHeight.push(h);//添加height坐标
+	    						listType.push(type);//添加类型
+	    						listId.push(detectionId);//添加id
+	    						//相同则删除
+	    						listViewX.splice(listViewX.indexOf(x), 1);
+	    						listViewY.splice(listViewY.indexOf(y), 1);
+	    						listViewWidth.splice(listViewWidth.indexOf(w), 1);
+	    						listViewHeight.splice(listViewHeight.indexOf(h), 1);
+	    						listViewType.splice(listViewType.indexOf(type), 1);
+	    						//重新加载form表单数据
+	    						$.ajax({
+	    							data : {
+	    								"id" : detectionId
+	    							},
+	    							url : "/detection/manager/find",
+	    							traditional : true,
+	    							dataType : "json",
+	    							type : 'POST',
+	    							success : function(result) {
+	    								if (result) {
+	    									debugger;
+	    									$("#fm").form("load", result);
+	    								} else {
+	    									$.messager.alert("系统提示", result.errorInfo);
+	    								}
+	    							}
+	    						});
+							} else {
+								draw = new Draw(obj,{type:style,color:color,width:linewidth});//实例化构造函数
+							}
+					        draw[type](x,y,w,h);
+						}
+					} else {
+						$.messager.alert("系统提示", result.errorInfo);
+					}
+				}
+			});
+		}
+	}
+	
+	//先查出所有已绘制图形
+	function findDetectionByProjectId() {
+		listViewX = [];
+		listViewY = [];
+		listViewWidth = [];
+		listViewHeight = [];
+		listViewType = [];
+		$.ajax({
+			data : {
+				"projectId" : projectId
+			},
+			url : "/detection/manager/findDetectionByProjectId",
+			traditional : true,
+			dataType : "json",
+			type : 'POST',
+			success : function(result) {
+				if (result) {
+					debugger;
+					for(var j=0;j<result.length;j++) {
+						var x = result[j].detectionLeftx;
+						var y = result[j].detectionLefty;
+						var w = result[j].detectionWidth;
+						var h = result[j].detectionHeight;
+						var type = result[j].type;
+						var draw = new Draw(obj,{type:style,color:color,width:linewidth});//实例化构造函数
+				        draw[type](x,y,w,h);
+				        listViewX.push(x);
+				        listViewY.push(y);
+				        listViewWidth.push(w);
+				        listViewHeight.push(h);
+				        listViewType.push(type);
+					}
+				} else {
+					$.messager.alert("系统提示", result.errorInfo);
+				}
+			}
+		});
+	};
+	//下拉框实时刷新
+	/* $('#detectionNameCombo').combobox({
+	   onShowPanel : function() {
+			$(this).combobox('options').url= '/detection/manager/comboList?projectId='+projectId;
+			$(this).combobox('reload');
+	   }
+	}); */
+	function detectionCombobox() {
+		$('#detectionNameCombo').combobox('options').url= '/detection/manager/comboList?projectId='+projectId;
+		$('#detectionNameCombo').combobox('reload');
+	}
+	//初始化form表单内容
+	function initForm() {
+		$("#videoSet1").prop("checked", true);
+		$("#createTime").val(genTodayStr());
+		$.ajax({
+			data : {
+				"projectId" : projectId
+			},
+			url : "/detection/manager/findInitData",
+			traditional : true,
+			dataType : "json",
+			type : 'POST',
+			success : function(result) {
+				if (result) {
+					debugger;
+					$("#fm").form("load", result);
+				} else {
+					$.messager.alert("系统提示", result.errorInfo);
+				}
+			}
+		});
+	}
+	// 获取画面
+    $(".get_class").click(function(){
+    	var jq = top.jQuery;
+    	if (jq("#tabs").tabs('exists', "获取画面")) {
+			jq('#tabs').tabs('select', "获取画面");
+			return false;
+		};
+		var content="<iframe id='ifm' frameborder=0 scrolling='auto' style='width:100%;height:99%' src='detection/getPicture.html?photoCode="+photoCode+"'></iframe>";
+		jq("#tabs").tabs("add", {
+			title : "获取画面",
+			iconCls : "menu-14",
+			closable : true,
+			content : content
+		});
+    })
+}
+	//关闭当前页面
+	function closeCurrTab() {
+		var jq = top.jQuery;
+		//关闭当前页面
+		var currTab = jq("#tabs").tabs('getSelected');
+		currTitle = currTab.panel('options').title;
+		jq('#tabs').tabs('close', currTitle);
+	};
+};
+</script>
+</html>

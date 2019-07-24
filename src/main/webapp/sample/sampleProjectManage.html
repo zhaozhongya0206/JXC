@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>新增任务信息</title>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body class="easyui-layout">
+	<!-- 相机信息弹框 -->
+	<div id="dlg2" class="easyui-dialog" style="width: 400px;height: 200px;padding: 10px 10px" data-options="title:'选择相机',loadMsg:'正在努力加载数据...'" closed="true" >
+		<table id="dg2" class="easyui-datagrid" fitColumns="true" rownumbers="true" singleSelect="true"
+			url="/photo/manager/findSuccessStatus" fit="true">
+			<thead>
+				<th field="photoCode" width="100" align="center">相机编号</th>
+				<th field="photoName" width="100" align="center">相机名称</th>
+				<th field="codeType" width="128" align="center">编码方式</th>
+				<th field="photoStatus" width="82" align="center" data-options="formatter:formatFlag">相机状态</th>
+			</thead>
+		</table>
+	</div>
+	
+	<div id="dlg" class="easyui-dialog" style="text-align:center; margin: 0px auto;" closable="false" title="" fit="true" buttons="#dlg-buttons" >
+		<form id="fm1" method="post">
+			<table cellspacing="30px" style="margin:auto;text-align:center">
+				<input id="id" name="id" type="text" style="display: none"/>
+				<input id="sampleId" name="sampleId" type="text" style="display: none"/>
+				<input id="sampleCode2" name="sampleCode" type="text" style="display: none"/>
+				<input id="sampleName2" name="sampleName" type="text" style="display: none"/>
+				<input id="projectFlag" name="projectFlag" type="text" style="display: none"/>
+				<tr>
+					<td>委托单编号：</td>
+					<td>
+						<input type="text" id="projectCode" name="projectCode" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+					<td>流程主题：</td>
+					<td>
+						<input type="text" id="projectName" name="projectName" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>视频源（相机）：</td>
+					<td>
+						<input id="photoCode2" name="photoCode" type="text" style="display: none"/>
+						<input type="text" id="photoName2" name="photoName" class="easyui-validatebox" required="true" style="width: 220px;height:20px" readonly="readonly" onclick="openPhotoCode(this)"/>
+					</td>
+					<td>编码方式：</td>
+					<td>
+						<input type="text" id="codeType" name="codeType" class="easyui-validatebox" required="true" style="width: 220px;height:20px" readonly="readonly" />
+					</td>
+				</tr>
+				<tr>
+					<td>录像设置：</td>
+					<td>
+						<input id="videoSet1" type="radio" name="videoSet" style="width: 50px" value="1" ><label for="videoSet1">不录像</label></input>
+            			<input id="videoSet2" type="radio" name="videoSet" style="width: 50px" value="2"><label for="videoSet2">全天录像</label></input>
+					</td>
+					<td>录像间隔（小时）：</td>
+					<td>
+						<select class="easyui-combobox" id="videoTime" name="videoTime" style="width: 220px;height:20px" editable="false" panelHeight="auto">
+							<option value="2" selected="selected">2</option>
+							<option value="4">4</option>
+							<option value="6">6</option>
+							<option value="8">8</option>
+							<option value="12">12</option>
+							<option value="24">24</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input id="checkException" type="checkbox" checked="checked" />
+					</td>
+					<td>
+						<label for="checkException">异常事件录像(默认勾选)</label>
+					</td>
+					<td>录像长度（秒）：</td>
+					<td>
+						<select class="easyui-combobox" id="exceptionEventTime" name="exceptionEventTime" style="width: 220px;height:20px" editable="false" panelHeight="auto">
+							<option value="10" selected="selected">10</option>
+							<option value="20">20</option>
+							<option value="30">30</option>
+							<option value="60">60</option>
+							<option value="120">120</option>
+							<option value="240">240</option>
+							<option value="480">480</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</form>
+		<form id="fm2" method="post">
+			<table cellspacing="40px" style="margin:auto;text-align:center">
+				<input id="id2" name="id" type="text" style="display: none"/>
+				<input id="projectId" name="projectId" type="text" style="display:none" />
+				<input id="projectCode2" name="projectCode" type="text" style="display:none" />
+				<input id="projectName2" name="projectName" type="text" style="display:none" />
+				<tr>
+					<td>样品编号：</td>
+					<td>
+						<input type="text" name="sampleCode" id="sampleCode" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+					<td>样品名称：</td>
+					<td>
+						<input type="text" name="sampleName" id="sampleName" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>设备编号：</td>
+					<td>
+						<input type="text" name="shebeiCode" class="easyui-validatebox" style="width: 220px;height:20px;"/>
+					</td>
+				
+					<td>设备名称：</td>
+					<td>
+						<input type="text" name="shebeiName" class="easyui-validatebox" style="width: 220px;height:20px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>环境湿度：</td>
+					<td>
+						<input type="text" name="hjShidu" class="easyui-validatebox" style="width: 220px;height:20px;"/>
+					</td>
+					<td>环境风向：</td>
+					<td>
+						<input type="text" name="huFengxiang" class="easyui-validatebox" style="width: 220px;height:20px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>人员名称：</td>
+					<td>
+						<input type="text" name="personName" class="easyui-validatebox" style="width: 220px;height:20px;"/>
+					</td>
+					<td>实验方法：</td>
+					<td>
+						<input type="text" name="shiyanMethod" class="easyui-validatebox" style="width: 220px;height:20px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>车型：</td>
+					<td>
+						<input type="text" name="carType" class="easyui-validatebox" style="width: 220px;height:20px;"/>
+					</td>
+					<td>年份：</td>
+					<td>
+						<input type="text" id="carYear" name="carYear" class="easyui-datebox" style="width: 220px;height:25px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>排量：</td>
+					<td>
+						<input type="text" name="displacement" class="easyui-validatebox" style="width: 220px;height:20px;"/>
+					</td>
+					<td>内部编号：</td>
+					<td>
+						<input type="text" name="innerCode" class="easyui-validatebox" style="width: 220px;height:20px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>备注：</td>
+					<td colspan="3">
+						<input type="text" name="remark" class="easyui-validatebox" style="width: 620px;height:20px;"/>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<div id="dlg-buttons">
+		<a href="javascript:save()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+		<a href="javascript:closeCurrTab()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
+	</div>
+</body>
+<script type="text/javascript">
+	//使用正则表达式截取url地址参数
+	getQuery = function(ifmSrc, name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+		var r = ifmSrc.substr(ifmSrc.indexOf("\?") + 1).match(reg);
+		if (r != null)
+			return unescape(r[2]);
+		return null;
+	};
+	//获取传入参数id
+	var ifmSrc = $(window.parent.document).find("#ifm").attr("src");
+	var projectId = getQuery(ifmSrc, "id");
+	var projectFlag = getQuery(ifmSrc, "projectFlag");
+	var isUpdateBool = getQuery(ifmSrc, "isUpdateBool");
+	
+	$(function() {
+		$("#dg2").datagrid({
+			onClickRow:function(index,row){
+				debugger;
+				$("#photoCode2").val(row.photoCode);
+				$("#photoName2").val(row.photoName);
+				$("#codeType").val(row.codeType);
+				closePhotoCode();
+			}
+		});
+		$("#checkException").click(function(){
+			debugger;
+	        if($('#checkException').prop('checked')){
+	        	$("#exceptionEventTime").combobox({disabled:false,required:true});
+	        }else{
+	        	$("#exceptionEventTime").combobox({disabled:true,required:false});
+	        	$("#exceptionEventTime").combobox('select', "");
+	        }
+	    });
+		defaultValue();
+		if(projectId) {
+			//先清空
+			resetValue();
+			//先还原禁用按钮
+			//disabledButTrue(false);
+			$.ajax({
+				url : "/sample/manager/findProjectSample",
+				traditional : true,
+				dataType : "json",
+				type : 'POST',
+				data : {
+					"projectId" : projectId,
+					"isUpdateBool" : isUpdateBool
+				},
+				success : function(result) {
+					debugger;
+					if (result.success) {
+						$("#fm1").form("load", result.projectManager);
+						$("#fm2").form("load", result.sampleManager);
+					} else {
+						$.messager.alert("系统提示", "系统异常，请稍后再试！");
+					}
+				}
+			});
+			//if(projectFlag && projectFlag == 1 || projectFlag == 2) {
+				//设置按钮不能编辑
+				//disabledButTrue(true);
+			//}
+		}
+		//复制直接触发
+		if(isUpdateBool == 0) {
+			$('#photoName2').trigger("click");
+		}
+	});
+
+	/************相机弹出框信息 start**************/
+	function openPhotoCode($this){
+		debugger;
+		var left = $($this).offset().left;
+		var top = $($this).offset().top + 30;
+		$('#dlg2').window('open').window('resize',{top: top,left:left});
+		$("#dg2").datagrid("reload");
+	}
+	//关闭弹框
+	function closePhotoCode(){
+		$("#dlg2").dialog("close");
+	}
+	//格式化flag标识
+	function formatFlag(value) {
+		if (value == null || value == '') {
+			return '';
+		}
+		if(value == '0') {
+			return "闲置";
+		}
+		if(value == '1') {
+			return "已使用";
+		}
+	};
+	/*************弹框信息 end ******************/
+	function save() {
+		if($("#fm1").form("validate") && $("#fm2").form("validate")) {
+			debugger;
+			$.ajax({
+                url : "/photo/manager/findByPhotoCode",
+                type : 'post',
+                dataType : 'json',
+                data : {"photoCode" : $("#photoCode2").val()},
+                success : function(result) {
+                	//回调函数 
+					if (result.success && result.photoManager) {
+						debugger;
+						//判断使用的相机是否闲置
+						if(result.photoManager.photoStatus == 0) {
+							$("#sampleCode2").val($("#sampleCode").val());
+							$("#sampleName2").val($("#sampleName").val());
+							$("#projectCode2").val($("#projectCode").val());
+							$("#projectName2").val($("#projectName").val());
+							$("#projectId").val($("#id").val());
+							$.ajax({
+				                url : "/sample/manager/save",
+				                type : 'post',
+				                dataType : 'json',
+				                data : $("#fm2").serialize(),
+				                success : function(result) {
+				                    //回调函数
+									if (result.success && result.id) {
+										debugger;
+										$("#sampleId").val(result.id);
+										$.ajax({
+							                url : "/project/manager/save",
+							                type : 'post',
+							                dataType : 'json',
+							                data : $("#fm1").serialize(),
+							                success:function(result) {
+							                    //回调函数 
+												if (result.success) {
+													debugger;
+													$.messager.alert("系统提示", "保存成功！");
+													$.messager.confirm("系统提示", "该记录保存成功，是否关闭页面？", function(r) {
+														if (r) {
+															closeCurrTab();
+														}
+													});
+												} else {
+													$.messager.alert("系统提示", "保存失败！");
+												}
+								        	}
+							            });
+									} else {
+										$.messager.alert("系统提示", "保存失败！");
+									}
+					        	}
+				            });
+						} else {
+							$.messager.alert("系统提示", "相机被占用，请重新选择！");
+						}
+					} else {
+						$.messager.alert("系统提示", "保存失败！");
+					}
+                }
+			});
+		}
+	}
+	
+	function disabledButTrue(Bool) {
+		debugger
+		$("#projectCode").attr('readonly', Bool);
+		$("#projectName").attr('readonly', Bool);
+		$("#comboboxPhotoCode").combobox({disabled: Bool});
+		$("#projectCombobox").combobox({disabled: Bool});
+		$("#sampleCode").attr('readonly', Bool);
+		$("#sampleName").attr('readonly', Bool);
+	}
+	
+	//关闭当前页面
+	function closeCurrTab() {
+		resetValue();
+		var jq = top.jQuery;
+		typeof window.top.reload_taskTab === 'function'
+		    && window.top.reload_taskTab.call();
+		//关闭当前页面
+		var currTab = jq("#tabs").tabs('getSelected');
+		currTitle = currTab.panel('options').title;
+		jq('#tabs').tabs('close', currTitle);
+		var currTab = jq("#tabs").tabs('getSelected');
+		if (jq("#tabs").tabs('exists', "任务管理")) {
+			  jq('#tabs').tabs('select', "任务管理");
+		}
+	};
+	function resetValue() {
+		$("#fm1").form('clear');
+		$("#fm2").form('clear');
+		$("#checkException").prop("checked", true);
+	};
+	function defaultValue() {
+		$("#checkException").prop("checked", true);
+		$("#videoTime").combobox('select', "2");//默认选中第一项
+		$("#exceptionEventTime").combobox('select', "10");//默认选中第一项
+		$("#videoSet2").prop("checked", true);
+	};
+</script>
+</html>

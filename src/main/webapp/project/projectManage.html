@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>任务管理</title>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/css/button.css"></link>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+<style type="text/css">
+a.disabled {
+	pointer-events: none;
+	filter: alpha(opacity = 50); /*IE滤镜，透明度50%*/
+	-moz-opacity: 0.5; /*Firefox私有，透明度50%*/
+	opacity: 0.5; /*其他，透明度50%*/
+}
+.btn {
+	color: black;
+    font-weight: bold;
+    padding: 5px;
+    border: solid 1px black;
+    background: lightgreen;
+    cursor: pointer;
+    transition: background 0.5s, color 0.5s;
+    -webkit-transition: background 0.5s, color 0.5s;
+}
+.btn:hover {
+    color: black;
+    background: yellow;
+}
+.img_class {
+  background-size:cover;
+  text-decoration:none;
+  text-align:center;
+  height:28px;
+  width:28px;
+}
+</style>
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'north'" style="height: 135px;padding: 10px;border: 0px;padding-top: 20px">
+		<fieldset style="border-color: #E7F0FF">
+		<legend style="font-size:16px">查询区域</span></legend>
+			<form id="queryFrom" method="post">
+				<table cellspacing="8px" style="font-size:16px">
+					<tr>
+						<td>委托单编号：</td>
+						<td>
+							<input type="text" id="projectCode" name="projectCode" class="easyui-textbox" style="width:100%;height:20px;"/>
+						</td>
+						<td></td>
+						<td></td>
+						<td>流程主题：</td>
+						<td>
+							<input type="text" id="projectName" name="projectName" class="easyui-textbox" style="width:100%;height:20px;"/>
+						</td>
+						<td></td>
+						<td></td>
+						<td>相机编号：</td>
+						<td>
+							<input type="text" id="photoCode" name="photoCode" class="easyui-textbox" style="width:100%;height:20px;"/>
+						</td>
+						<td>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<a href="javascript:searchQuery()" class="chaxun_class">查 询</a>
+							&nbsp;&nbsp;&nbsp;
+							<a href="javascript:clearQuery()"  class="qingkong_class">清 空</a>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</fieldset>
+	</div>
+	
+	<div data-options="region:'center'" style="padding: 10px;border: 1px">
+		<table id="dg" class="easyui-datagrid" style="height:1200px" pageSize="20" data-options="loadMsg:'正在努力加载数据...'"
+			fitColumns="true" rownumbers="true" pagination="true" rownumbers="true" url="/project/manager/list" fit="true" toolbar="#tb">
+			<thead>
+				<th field="cb" checkbox="true" align="center"></th>
+				<th field="projectCode" width="70" align="center">委托单编号</th>
+				<th field="projectName" width="100" align="center">流程主题</th>
+				<th field="sampleCode" width="60" align="center">样品编号</th>
+				<th field="sampleName" width="100" align="center">样品名称</th>
+				<th field="photoCode" width="60" align="center">相机编号</th>
+				<th field="photoName" width="100" align="center">相机名称</th>
+				<th field="videoSetName" width="60" align="center">录像设置</th>
+				<th field="videoTime" width="60" align="center">录像间隔</th>
+				<th field="exceptionEventTime" width="70" align="center">录像长度(秒)</th>
+				<th field="createTime" width="120" align="center" data-options="formatter:formatDate">创建时间</th>
+				<th field="projectFlagName" width="50" align="center">状态</th>
+				<th field="operation" data-options="formatter:operation" width="180" align="center">操作</th>
+				<th field="dataPlaying" data-options="formatter:dataPlaying" width="80" align="center">事件查询</th>
+			</thead>
+		</table>
+		<div id="tb">
+			<div style="padding: 2px">
+				<a href="javascript:openAddDialog()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a>
+				<a href="javascript:openModifyDialog()" class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a>
+				<a id="deleteId" href="javascript:deleteOneGrid()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+				<a href="javascript:openCopyDialog()" class="easyui-linkbutton" iconCls="icon-edit" plain="true">复制</a>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var url;
+		/* var IsCheckFlag = true; //标示是否是勾选复选框选中行的，true - 是 , false - 否
+		$("#dg").datagrid({
+			onClickCell : function(rowIndex, field, value) {
+				IsCheckFlag = false;
+			},
+			onCheck : function(rowIndex, rowData) {
+				if (!IsCheckFlag && rowData.projectFlag == "3") {
+					IsCheckFlag = true;
+					$("#deleteId").addClass("disabled");
+				} else {
+					$("#deleteId").removeClass("disabled");
+				}
+			},
+			onUncheck : function(rowIndex, rowData) {
+				if (!IsCheckFlag) {
+					IsCheckFlag = true;
+					$("#deleteId").removeClass("disabled");
+				}
+			}
+		}); */
+		
+		//清空form表单查询条件
+		function clearQuery() {
+			$("#queryFrom").form('clear');
+		};
+		//初始化列表颜色
+		rowStyler();
+		function searchQuery() {
+			$("#dg").datagrid('load', {
+				"photoCode" : $("#photoCode").val(),
+				"projectCode" : $("#projectCode").val(),
+				"projectName" : $("#projectName").val()
+			});
+			rowStyler();
+		}
+
+		function resetValue() {
+			$("#fm").form('clear');
+		}
+		function closeDialog() {
+			$("#dlg").dialog("close");
+			closePhotoCode();
+			closeSampleCode();
+			resetValue();
+		}
+		function openAddDialog() {
+			$.ajax({
+				url : "/photo/manager/findSuccessStatus",
+				dataType : "json",
+				type : 'POST',
+				success : function(result) {
+					if (result.length<=0) {
+						$.messager.alert("系统提示", "没有空闲的相机！");
+						return false;
+					} else {
+						var jq = top.jQuery;
+						if (jq("#tabs").tabs('exists', "新增任务信息")) {
+							jq('#tabs').tabs('select', "新增任务信息");
+							return false;
+						};
+						var content2 = "<iframe id='ifm' frameborder=0 scrolling='auto' style='width:100%;height:100%' src='/sample/sampleProjectManage.html'></iframe>";
+						jq("#tabs").tabs("add", {
+							title : "新增任务信息",
+							iconCls : "menu-11",
+							closable : true,
+							content : content2
+						});
+					}
+				}
+			});
+		}
+		function openModifyDialog() {
+			var selectedRows = $("#dg").datagrid("getSelections");
+			if (selectedRows.length != 1) {
+				$.messager.alert("系统提示", "请选择一条要修改的数据！");
+				return;
+			}
+			var row = selectedRows[0];
+			$.ajax({
+				url : "/project/manager/findById",
+				dataType : "json",
+				type : 'POST',
+				data : {"id" : row.id},
+				success : function(result) {
+					if (result) {
+						if(1 == result.projectFlag) {
+							$.messager.alert("系统提示", "进行中不可修改！");
+							return false;
+						} else if(2 == result.projectFlag) {
+							$.messager.alert("系统提示", "暂停中不可修改！");
+							return false;
+						} else if(3 == result.projectFlag) {
+							$.messager.alert("系统提示", "已结束不可修改！");
+							return false;
+						} else {
+							var jq = top.jQuery;
+							if (jq("#tabs").tabs('exists', "修改任务信息")) {
+								jq('#tabs').tabs('select', "修改任务信息");
+								return false;
+							};
+							var content2 = "<iframe id='ifm' frameborder=0 scrolling='auto' style='width:100%;height:100%' src='/sample/sampleProjectManage.html?id="+ row.id + "&projectFlag="+row.projectFlag+"&isUpdateBool=1"+"'></iframe>";
+							jq("#tabs").tabs("add", {
+								title : "修改任务信息",
+								iconCls : "menu-11",
+								closable : true,
+								content : content2
+							});
+						}
+					} else {
+						$.messager.alert("系统提示", "请稍后重试！");
+					}
+				}
+			});
+		};
+		//复制
+		function openCopyDialog() {
+			var selectedRows = $("#dg").datagrid("getSelections");
+			if (selectedRows.length != 1) {
+				$.messager.alert("系统提示", "请选择一条数据进行复制！");
+				return;
+			} else {
+				$.ajax({
+					url : "/photo/manager/findSuccessStatus",
+					dataType : "json",
+					type : 'POST',
+					success : function(result) {
+						if (result.length<=0) {
+							$.messager.alert("系统提示", "没有空闲的相机！");
+							return false;
+						} else {
+							var row = selectedRows[0];
+							var jq = top.jQuery;
+							if (jq("#tabs").tabs('exists', "新增任务信息")) {
+								jq('#tabs').tabs('select', "新增任务信息");
+								return false;
+							};
+							var content2 = "<iframe id='ifm' frameborder=0 scrolling='auto' style='width:100%;height:100%' src='/sample/sampleProjectManage.html?id="+ row.id + "&projectFlag="+row.projectFlag+"&isUpdateBool=0"+"'></iframe>";
+							jq("#tabs").tabs("add", {
+								title : "新增任务信息",
+								iconCls : "menu-11",
+								closable : true,
+								content : content2
+							});
+						}
+					}
+				});
+			}
+		};
+		function deleteOneGrid() {
+			var selectedRows = $("#dg").datagrid("getSelections");
+			if (selectedRows.length == 0) {
+				$.messager.alert("系统提示", "请选择要删除的数据！");
+				return;
+			}
+			var strIds = [];
+			for (var i = 0; i < selectedRows.length; i++) {
+				//1 开始 2暂停 浅红色
+				if (selectedRows[i].projectFlag == "1" || selectedRows[i].projectFlag == "2") {
+					$.messager.alert("系统提示", "进行中不可删除！");
+					return;
+				} else {
+					strIds.push(selectedRows[i].id);	
+				}
+			}
+			var ids = strIds.join(",");
+			$.messager.confirm("系统提示", "您确定要删除这条数据吗?", function(r) {
+				if (r) {
+					$.post("/project/manager/delete", {
+						ids : ids
+					}, function(result) {
+						if (result.success) {
+							$.messager.alert("系统提示", "数据已成功删除！");
+							$("#dg").datagrid("reload");
+							rowStyler();
+						} else {
+							$.messager.alert("系统提示", result.errorInfo);
+						}
+					}, "json");
+				}
+			});
+		};
+		function operation(value, row, index) {
+			//0未启用 浅黄色
+			if (row.projectFlag == "0") {
+				debugger;
+				return "<a href='javascript:void(0)' title='开 始' onclick='startProject("+row.id+",\""+row.photoCode+"\");'><img src='../img/kaishi.png' class='img_class'/></a>"
+				+ "&nbsp;<a href='javascript:void(0)' title='暂 停' style='cursor:pointer;pointer-events: none;'><img src='../img/zanting_disable.png' class='img_class'/></a>"
+				+ "&nbsp;<a href='javascript:void(0)' title='结 束' style='cursor:pointer;pointer-events: none;'><img src='../img/jieshu_disable.png' class='img_class'/></a>"
+				+ "&nbsp;<a href='javascript:void(0)' title='设 置' onclick='setUpProject("+ row.id+",\""+row.photoCode+"\");'><img src='../img/shezhi.png' class='img_class'/></a>";
+			}
+			//1 开始  浅红色
+			if (row.projectFlag == "1") {
+				debugger;
+				return "<a href='javascript:void(0)' title='开 始' style='cursor:pointer;pointer-events: none;'><img src='../img/kaishi_disable.png' class='img_class'/></a>"
+				+ "&nbsp;<a href='javascript:void(0)' title='暂 停' onclick='stopProject("+ row.id+ ");'><img src='../img/zanting.png' class='img_class'/></a>"
+				+ "&nbsp;<a href='javascript:void(0)' title='结 束' onclick='discontinueProject("+row.id+");'><img src='../img/jieshu.png' class='img_class'/></a>"
+				+ "&nbsp;<a href='javascript:void(0)' title='设 置' style='cursor:pointer;pointer-events: none;'><img src='../img/shezhi_disable.png' class='img_class'/></a>";
+			}
+			//2 暂停 浅红色
+			if (row.projectFlag == "2") {
+				debugger;
+				return "<a href='javascript:void(0)' title='开 始' onclick='startProject("+row.id+",\""+row.photoCode+"\");'><img src='../img/kaishi.png' class='img_class'/></a>"
+				+ "&nbsp;<a href='javascript:void(0)' title='暂 停'style='cursor:pointer;pointer-events: none;'><img src='../img/zanting_disable.png' class='img_class'/></a>"
+				+ "&nbsp;<a href='javascript:void(0)' title='结 束' onclick='discontinueProject("+row.id+");'><img src='../img/jieshu.png' class='img_class'/></a>"
+				+ "&nbsp;<a href='javascript:void(0)' title='设 置' onclick='setUpProject("+ row.id+",\""+row.photoCode+"\");'><img src='../img/shezhi.png' class='img_class'/></a>";
+			}
+			//3 结束 浅灰色
+			if (row.projectFlag == "3") {
+				debugger;
+				return "<a href='javascript:void(0)' title='开 始' style='cursor:pointer;pointer-events: none;'><img src='../img/kaishi_disable.png' class='img_class'/></a>"
+				+ "&nbsp;<a href='javascript:void(0)' title='暂 停' style='cursor:pointer;pointer-events: none;'><img src='../img/zanting_disable.png' class='img_class'/></a>"
+				+ "&nbsp;<a href='javascript:void(0)' title='结 束' style='cursor:pointer;pointer-events: none;'><img src='../img/jieshu_disable.png' class='img_class'/></a>"
+				+ "&nbsp;<a href='javascript:void(0)' title='设 置' style='cursor:pointer;pointer-events: none;'><img src='../img/shezhi_disable.png' class='img_class'/></a>";
+			}
+		};
+		function dataPlaying(value, row, index) {
+			debugger;
+			return "<a href='#' class='easyui-tooltip' onclick='dataPlay("+row.id+");' title=" + "\"事件查询\"" + ">" + "事件查询" + "</a>";
+		};
+		//格式化日期显示
+		function formatDate(value, row, index) {
+			if(value) {
+				var date = new Date(value);
+                var y = date.getFullYear();
+                var m = date.getMonth() + 1;
+                var d = date.getDate();
+                var h = date.getHours();
+                var M = date.getMinutes();
+                var s = date.getSeconds();
+				// 可根据需要在这里定义时间格式  
+				return y + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d) + ' ' + (h < 10 ? '0' + h : h) + ':' + (M < 10 ? '0' + M : M) + ':' + (s < 10 ? '0' + s : s);
+			}
+       	};
+		//跳转“开始”页面
+		function startProject(id, photoCode) {
+			debugger;
+			if (id && photoCode) {
+				/* $.ajax({
+					data : {
+						photoCode : photoCode
+					},
+					url : "/photo/manager/findSuccessByPhotoCode",
+					dataType : "json",
+					type : 'POST',
+					success : function(result) {
+						if (result.photoStatus == "1") {
+							$.messager.alert("系统提示", "该相机已被占用！");
+							return false;
+						} else { */
+							$.ajax({
+								data : {
+									id : id,
+									projectFlag : 1
+								},
+								url : "/project/manager/updateFlag",
+								dataType : "json",
+								type : 'POST',
+								success : function(result) {
+									debugger;
+									if (result.success) {
+										$.messager.alert("系统提示", "操作成功！");
+										$("#dg").datagrid("reload");
+										rowStyler();
+									} else {
+										$.messager.alert("系统提示", result.errorInfo);
+									}
+								}
+							});
+						/* }
+					}
+				}); */
+			} else {
+				$.messager.alert("系统提示", "系统异常，请稍后重试！");
+				return false;
+			}
+		};
+		//跳转“暂停”页面
+		function stopProject(id) {
+			debugger;
+			if (id) {
+				$.ajax({
+					data : {
+						id : id,
+						projectFlag : 2
+					},
+					url : "/project/manager/updateFlag",
+					dataType : "json",
+					type : 'POST',
+					success : function(result) {
+						if (result.success) {
+							$.messager.alert("系统提示", "操作成功！");
+							$("#dg").datagrid("reload");
+							rowStyler();
+						} else {
+							$.messager.alert("系统提示", result.errorInfo);
+						}
+					}
+				});
+			} else {
+				$.messager.alert("系统提示", "系统异常，请稍后重试！");
+				return false;
+			}
+		};
+		//跳转“结束”页面
+		function discontinueProject(id,photoCode) {
+			debugger;
+			if (id) {
+				$.messager.confirm("系统提示", "该条目一旦被结束后无法再被激活？", function(r) {
+					if (r) {
+						debugger;
+						$.ajax({
+							data : {
+								id : id,
+								projectFlag : 3
+							},
+							url : "/project/manager/updateFlag",
+							dataType : "json",
+							type : 'POST',
+							success : function(result) {
+								if (result.success) {
+									$.messager.alert("系统提示", "操作成功！");
+									$("#dg").datagrid("reload");
+									rowStyler();
+								} else {
+									$.messager.alert("系统提示", result.errorInfo);
+								}
+							}
+						});
+					}
+				});
+			} else {
+				$.messager.alert("系统提示", "系统异常，请稍后重试！");
+				return false;
+			}
+		};
+		//设置按钮跳转页面
+		function setUpProject(id, photoCode) {
+			debugger;
+			if(id && photoCode) {
+				var jq = top.jQuery;
+				if (jq("#tabs").tabs('exists', "监控设置")) {
+					jq('#tabs').tabs('select', "监控设置");
+					return false;
+				}
+				;
+				var content2 = "<iframe id='ifm2' frameborder=0 scrolling='auto' style='width:100%;height:100%' src='/detection/detectionImgUpdateManage.html?id="+id+"&photoCode="+photoCode+"'></iframe>";
+				jq("#tabs").tabs("add", {
+					title : "监控设置",
+					iconCls : "menu-11",
+					closable : true,
+					content : content2
+				});
+			} else {
+				$.messager.alert("系统提示", "系统异常，请稍后重试！");
+				return false;
+			}
+		};
+		//跳转事件查询页面
+		function dataPlay(projectId) {
+			debugger;
+			var jq = top.jQuery;
+			if (jq("#tabs").tabs('exists', "事件查询")) {
+				jq('#tabs').tabs('select', "事件查询");
+				return false;
+			};
+			var content = "<iframe id='ifm' frameborder=0 scrolling='auto' style='width:100%;height:100%' src='/data/dataPlayVideo.html?projectId="+projectId+"'></iframe>";
+			jq("#tabs").tabs("add", {
+				title : "事件查询",
+				iconCls : "menu-14",
+				closable : true,
+				content : content
+			});
+		};
+		function rowStyler() {
+			$('#dg').datagrid({
+				rowStyler : function(index, row) {
+					//0未启用浅黄色
+					if (row.projectFlag == "0") {
+						return 'background-color:#f8f486;filter: alpha(opacity = 50);-moz-opacity:0.9;opacity: 0.9;color:black;font-weight:bold;';
+					}
+					//1 开始 2暂停 浅红色
+					if (row.projectFlag == "1" || row.projectFlag == "2") {
+						return 'background-color:#e43e42;filter: alpha(opacity = 50);-moz-opacity:0.9;opacity: 0.9;color:black;font-weight:bold;';
+					}
+					//3 结束 浅灰色
+					if (row.projectFlag == "3") {
+						return 'background-color:#c2c7cb;filter: alpha(opacity = 50);-moz-opacity:0.9;opacity: 0.9;color:black;font-weight:bold;';
+					}
+				}
+			});
+		};
+		//子页面调用函数
+		window.top["reload_taskTab"] = function() {
+			$("#dg").datagrid("reload");
+		};
+	</script>
+</body>
+</html>

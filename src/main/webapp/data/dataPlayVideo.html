@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>事件查询</title>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/css/button.css"></link>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'north'" style="height: 170px;padding: 10px;border: 0px;padding-top: 20px">
+		<fieldset style="border-color: #E7F0FF">
+		<legend style="font-size:16px">查询区域</span></legend>
+			<form id="queryFrom" method="post">
+				<input type="text" id="projectId" name="projectId" style="display: none" />
+				<table cellspacing="8px" style="font-size:16px">
+					<tr>
+						<td>开始时间：</td>
+						<td>
+							<input type="text" id="createTimeStart" name="createTimeStart" style="width: 180px;height:25px;" class="easyui-datebox" />
+						</td>
+						<td>结束时间：</td>
+						<td>
+							<input type="text" id="createTimeEnd" name="createTimeEnd" style="width: 180px;height:25px;" class="easyui-datebox" />
+						</td>
+					</tr>
+					<tr>
+						<td>检测区域名称：</td>
+						<td>
+							<input type="text" id="detectionName" style="width: 180px;height:20px;" name="detectionName" class="easyui-textbox" />
+						</td>
+						<td>流程主题：</td>
+						<td>
+							<input type="text" id="projectName" name="projectName" style="width: 180px;height:20px;" readonly="readonly" onclick="openProjectCode(this)"/>
+						</td>
+					</tr>
+					<tr>
+						<td>样品名称：</td>
+						<td>
+							<input type="text" id="sampleName" name="sampleName" style="width: 180px;height:20px;" readonly="readonly" onclick="openSampleCode(this)"/>
+						</td>
+						<td>相机名称：</td>
+						<td>
+							<input type="text" id="photoName" name="photoName" style="width: 180px;height:20px;" readonly="readonly" onclick="openPhotoCode(this)"/>
+						</td>
+						<td>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<a href="javascript:searchQuery()" class="chaxun_class">查 询</a>
+							&nbsp;&nbsp;&nbsp;
+							<a href="javascript:clearQuery()"  class="qingkong_class">清 空</a>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</fieldset>
+	</div>
+    
+    <!-- 相机信息弹框 -->
+	<div id="dlg2" class="easyui-dialog" style="width: 400px;height: 200px;padding: 10px 10px" 
+		data-options="title:'选择相机名称',pageSize: 20,loadMsg:'正在努力加载数据...'" closed="true" >
+		<table id="dg2" class="easyui-datagrid" fitColumns="true" rownumbers="true" singleSelect="true"
+			url="/photo/manager/comboList" fit="true">
+			<thead>
+				<th field="photoCode" width="100" align="center">相机编号</th>
+				<th field="photoName" width="100" align="center">相机名称</th>
+			</thead>
+		</table>
+	</div>
+	<!-- 样品信息弹框 -->
+	<div id="dlg3" class="easyui-dialog" style="width: 400px;height: 200px;padding: 10px 10px" data-options="title:'选择样品名称',pageSize: 20,loadMsg:'正在努力加载数据...'" closed="true" >
+		<table id="dg3" class="easyui-datagrid" fitColumns="true" rownumbers="true" singleSelect="true"
+			url="/sample/manager/comboList" fit="true">
+			<thead>
+				<th field="sampleCode" width="100" align="center">样品编号</th>
+				<th field="sampleName" width="100" align="center">样品名称</th>
+			</thead>
+		</table>
+	</div>
+	<!-- 项目信息弹框 -->
+	<div id="dlg4" class="easyui-dialog" style="width: 400px;height: 200px;padding: 10px 10px" data-options="title:'选择任务名称',pageSize: 20,loadMsg:'正在努力加载数据...'" closed="true" >
+		<table id="dg4" class="easyui-datagrid" fitColumns="true" rownumbers="true" singleSelect="true"
+			url="/project/manager/comboList" fit="true">
+			<thead>
+				<th field="projectCode" width="100" align="center">委托单编号</th>
+				<th field="projectName" width="100" align="center">流程主题</th>
+			</thead>
+		</table>
+	</div>
+    
+	<div data-options="region:'center'" style="padding: 10px;border: 1px">
+		<table id="dg" class="easyui-datagrid" style="height:1200px" pageSize="20" toolbar="#tb"
+			data-options="
+				fitColumns: true,
+				pagination: true,
+				rownumbers: true,
+				fit: true,
+				pageSize: 20,
+				loadMsg:'正在努力加载数据...',
+				rowStyler: function(index,row){
+					if (row.flag=='1'){
+						return 'background-color:#c2c7cb;color:black;font-weight:bold;';
+					} else {
+					}
+				}
+			">
+			<thead>
+				<th field="cb" checkbox="true" align="center"></th>
+				<th field="projectCode" width="50" align="center">委托单编号</th>
+				<th field="projectName" width="80" align="center">流程主题</th>
+				<th field="sampleCode" width="50" align="center">样品编号</th>
+				<th field="sampleName" width="80" align="center">样品名称</th>
+				<th field="detectionName" width="80" align="center">检测区域名称</th>
+				<th field="photoName" width="80" align="center">相机名称</th>
+				<th field="createTime" width="115" align="center" data-options="formatter:formatDatebox">时间</th>
+				<th field="flag" width="40" align="center" data-options="formatter:formatFlag">标识</th>
+				<th field="videoPath" width="300" align="center" data-options="formatter:operationVido">异常视频</th>
+				<th field="picturePath" width="300" align="center" data-options="formatter:operationImg">异常图片</th>
+			</thead>
+		</table>
+		<div id="tb">
+			<div style="padding: 2px">
+				<a href="javascript:deleteOneGrid()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+			</div>
+		</div>
+	</div>
+	
+	<div id="dlg-operationPlay" class="easyui-dialog" 
+		style="padding: 0px 0px; margin: 0px auto;" fit="true" closed="true" buttons="#dlg-operationPla-buttons" >
+		<iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" oallowfullscreen=“"true" msallowfullscreen="true" id="iframeOperationPlay" frameborder=0 scrolling='auto' style='width:100%;height:100%' src=''></iframe>
+		<input type="text" id="videoSrc" name="videoSrc" style="display: none;"/>
+		<input type="text" id="imgSrc" name="imgSrc" style="display: none;"/>
+	</div>
+	
+	<script type="text/javascript">
+		Date.prototype.format = function(format) {
+			var o = {
+				"M+" : this.getMonth() + 1, // 月
+				"d+" : this.getDate(), // 天
+				"h+" : this.getHours(), // 时
+				"m+" : this.getMinutes(), // 分
+				"s+" : this.getSeconds(), // 秒
+				"q+" : Math.floor((this.getMonth() + 3) / 3), // 刻
+				"S" : this.getMilliseconds() //毫秒
+			}
+			if (/(y+)/.test(format))
+				format = format.replace(RegExp.$1, (this.getFullYear() + "")
+						.substr(4 - RegExp.$1.length));
+			for ( var k in o)
+				if (new RegExp("(" + k + ")").test(format))
+					format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k]
+							: ("00" + o[k]).substr(("" + o[k]).length));
+			return format;
+		};
+		function formatDatebox(value) {
+			if (value == null || value == '') {
+				return '';
+			}
+			var date;
+			if (value instanceof Date) {
+				date = value;
+			} else {
+				date = new Date(value);
+			}
+            var y = date.getFullYear();
+            var m = date.getMonth() + 1;
+            var d = date.getDate();
+            var h = date.getHours();
+            var M = date.getMinutes();
+            var s = date.getSeconds();
+			// 可根据需要在这里定义时间格式  
+			return y + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d) + ' ' + (h < 10 ? '0' + h : h) + ':' + (M < 10 ? '0' + M : M) + ':' + (s < 10 ? '0' + s : s);
+		};
+		//格式化flag标识
+		function formatFlag(value) {
+			if (value == null || value == '') {
+				return '';
+			}
+			if(value == '0') {
+				return "未读";
+			}
+			if(value == '1') {
+				return "已读";
+			}
+		};
+		var ifmProjectCode = null;
+		var ifmProjectName = null;
+		var ifmSampleCode = null;
+		var ifmSampleName = null;
+		//使用正则表达式截取url地址参数
+		getQuery = function(ifmSrc, name) {
+			if(ifmSrc && name) {
+				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+				var r = ifmSrc.substr(ifmSrc.indexOf("\?") + 1).match(reg);
+				if (r != null)
+					return unescape(r[2]);
+				return null;
+			}
+		};
+		//获取传入参数id
+		var ifmSrc = $(window.parent.document).find("#ifm").attr("src");
+		debugger;
+		var projectId = getQuery(ifmSrc, "projectId");
+		if(projectId) {
+			$.ajax({
+				url : "/project/manager/findById",
+				dataType : "json",
+				type : 'POST',
+				data : {"id" : projectId},
+				success : function(result) {
+					debugger;
+					if (result) {
+						ifmProjectCode = result.projectCode;
+						ifmProjectName = result.projectName;
+						ifmSampleCode = result.sampleCode;
+						ifmSampleName = result.sampleName;
+						rowStyler(result.projectCode, result.projectName, result.sampleCode, result.sampleName);
+					}
+				}
+			});
+		}
+		//刷新当前页面
+		window.top["reload_taskTab"] = function(projectId) {
+			//rowStyler(projectId);
+		};
+		function rowStyler(projectCode, projectName, sampleCode, sampleName) {
+	    	$.ajax({
+	            type: "POST", //提交数据的类型 分为POST和GET  
+	            async: false,
+	            url: "/data/play/list",  //提交url 注意url必须小写 
+	            data: {"page": 1, "rows": 100, "projectCode" : projectCode, "projectName" : projectName, "sampleCode" : sampleCode, "sampleName" : sampleName},  
+	            success: function (data) {
+	                $('#dg').datagrid('loadData', data);
+	            }
+	        });
+		};
+		$(function() {
+			$("#dg2").datagrid({
+				onClickRow:function(index,row){
+					$("#photoName").val(row.photoName);
+					closePhotoCode();
+				}
+			});
+			$("#dg3").datagrid({
+				onClickRow:function(index,row){
+					$("#sampleName").val(row.sampleName);
+					closeSampleCode();
+				}
+			});
+			$("#dg4").datagrid({
+				onClickRow:function(index,row){
+					$("#projectName").val(row.projectName);
+					closeProjectCode();
+				}
+			});
+			$("#dg").datagrid("getPager").pagination({
+		    	onBeforeRefresh:function(){
+		           //debugger;
+		      	},
+		       	onRefresh:function(pageNumber,pageSize){
+		           	$.ajax({
+			            type: "POST", //提交数据的类型 分为POST和GET  
+			            async: false,
+			            url: "/data/play/list",  //提交url 注意url必须小写 
+			            data: {"page": pageNumber, "rows": pageSize, 
+			            	"createTimeStart" : $('#createTimeStart').datebox('getValue'),
+			            	"createTimeEnd" : $('#createTimeEnd').datebox('getValue'),
+			            	"detectionName" : $("#detectionName").val(),
+			            	"projectName" : $("#projectName").val(),
+			            	"sampleName" : $("#sampleName").val(),
+			            	"photoName" : $("#photoName").val()
+			            }, success: function (data) {
+			            	debugger;
+			                $('#dg').datagrid('loadData', data);
+			            }
+				    });
+		        },
+		       	onChangePageSize:function(){
+		           //alert('pagesize changed');
+		        },
+				onSelectPage:function(pageNumber,pageSize){
+		           $.ajax({
+			            type: "POST", //提交数据的类型 分为POST和GET  
+			            async: false,
+			            url: "/data/play/list",  //提交url 注意url必须小写 
+			            data: {"page": pageNumber, "rows": pageSize, 
+			            	"createTimeStart" : $('#createTimeStart').datebox('getValue'),
+			            	"createTimeEnd" : $('#createTimeEnd').datebox('getValue'),
+			            	"detectionName" : $("#detectionName").val(),
+			            	"projectName" : $("#projectName").val(),
+			            	"sampleName" : $("#sampleName").val(),
+			            	"photoName" : $("#photoName").val()
+			            }, success: function (data) {
+			            	debugger;
+			                $('#dg').datagrid('loadData', data);
+			            }
+				    });
+				}
+		   });
+			if(!projectId) {
+				 $.ajax({
+		            type: "POST", //提交数据的类型 分为POST和GET  
+		            async: false,
+		            url: "/data/play/list",  //提交url 注意url必须小写 
+		            data: {"page": 1, "rows": 100},  
+		            success: function (data) {
+		                $('#dg').datagrid('loadData', data);
+		            }
+				});
+			}
+		});
+		/************相机弹出框信息 start**************/
+		function openPhotoCode($this){
+			debugger;
+			var left = $($this).offset().left;
+			var top = $($this).offset().top + 30;
+			$('#dlg2').window('open').window('resize',{top: top, left:left});
+			$("#dg2").datagrid("reload");
+		}
+		//关闭弹框
+		function closePhotoCode(){
+			$("#dlg2").dialog("close");
+		}
+		/************样品信息弹出框***************/
+		function openSampleCode($this){
+			debugger;
+			var left = $($this).offset().left;
+			var top = $($this).offset().top + 30;
+			$('#dlg3').window('open').window('resize',{top: top,left:left});
+			$("#dg3").datagrid("reload");
+		}
+		//关闭弹框
+		function closeSampleCode(){
+			$("#dlg3").dialog("close");
+		}
+		/************项目信息弹出框***************/
+		function openProjectCode($this){
+			debugger;
+			var left = $($this).offset().left;
+			var top = $($this).offset().top + 30;
+			$('#dlg4').window('open').window('resize',{top: top,left:left});
+			$("#dg4").datagrid("reload");
+		}
+		//关闭弹框
+		function closeProjectCode(){
+			$("#dlg4").dialog("close");
+		}
+		/*************弹框信息 end ******************/
+		function searchQuery() {
+			debugger;
+			var createTimeStart = $('#createTimeStart').datebox('getValue');
+			var createTimeEnd = $('#createTimeEnd').datebox('getValue');
+			var detectionName = $("#detectionName").val();
+			var projectName = $("#projectName").val();
+			var sampleName = $("#sampleName").val();
+			var photoName = $("#photoName").val();
+	        var options = $('#dg').datagrid('getPager').data("pagination").options;
+	        var curr = options.pageNumber;
+	        var pageSize = options.pageSize;
+	        $.ajax({
+	            type: "POST", //提交数据的类型 分为POST和GET  
+	            async: false,
+	            url: "/data/play/list",  //提交url 注意url必须小写 
+	            data: {"page": curr, "rows": pageSize, 
+	            	"createTimeStart" : createTimeStart,
+	            	"createTimeEnd" : createTimeEnd,
+	            	"detectionName" : detectionName,
+	            	"projectName" : projectName,
+	            	"sampleName" : sampleName,
+	            	"photoName" : photoName
+	            }, success: function (data) {
+	            	debugger;
+	                $('#dg').datagrid('loadData', data);
+	            }
+		    });
+	        var ifmProjectCode = null;
+			var ifmProjectName = null;
+			var ifmSampleCode = null;
+			var ifmSampleName = null;
+		};
+		//清空form表单查询条件
+		function clearQuery() {
+			$("#queryFrom").form('clear');
+		};
+		//设置操作列默认为“播放”
+		function operationVido(value, row, index) {
+			debugger;
+			if(!value) {
+				return value;
+			}
+			var arrs = value.split(',');
+			var arrStrs = new Array(arrs.length-1);
+			$.each(arrs, function(index, value2){
+				if(value2) {
+					arrStrs[index] = "<a href='#' class='easyui-tooltip' onclick='playVideo("+row.id+",\""+value2+"\""+");' title=" + "\"点击播放\"" + ">" + value2 + "</a>";	
+				}
+			});
+			return arrStrs.toString();
+		};
+		//调用播放器
+		function playVideo(id, value) {
+			debugger;
+			if(value && id) {
+				//修改标识为已读
+				$.ajax({
+					url : "/data/play/updateFlag",
+					traditional : true,
+					dataType : "json",
+					type : 'POST',
+					data : {"id" : id},
+					success : function(resultData) {
+						debugger;
+						if (resultData.success) {
+							if(ifmProjectCode && ifmProjectName && ifmSampleCode && ifmSampleName) {
+								rowStyler(ifmProjectCode, ifmProjectName, ifmSampleCode, ifmSampleName);	
+							} else {
+								 $.ajax({
+						            type: "POST", //提交数据的类型 分为POST和GET  
+						            async: false,
+						            url: "/data/play/list",  //提交url 注意url必须小写 
+						            data: {"page": 1, "rows": 100},
+						            success: function (data) {
+						                $('#dg').datagrid('loadData', data);
+						            }
+								});
+							}
+						} else {
+							$.messager.alert("系统提示", "系统异常，请稍后再试！");
+						}
+					}
+				});
+				debugger;
+				$('#iframeOperationPlay').attr('src', "/data/playingVideo.html");
+				$("#videoSrc").attr("value", "exception/video/" + value);
+				$("#dlg-operationPlay").dialog("open").dialog("setTitle", "播放视频页面");
+			} else {
+				$.messager.alert('温馨提示', "播放视频错误！", 'error');
+				return false;
+			}
+		};
+		//展示异常图片
+		function operationImg(value, row, index) {
+			debugger
+			if(!value) {
+				return value;
+			}
+			var arrs = value.split(',');
+			var arrStrs = new Array(arrs.length-1);
+			$.each(arrs, function(index, value2){
+				if(value2) {
+					arrStrs[index] = "<a href='#' class='easyui-tooltip' onclick='playImg("+row.id+",\""+value2+"\""+");' title="+"\"点击播放\""+">" + value2 + "</a>";	
+				}
+			});
+			return arrStrs.toString();
+		};
+		function playImg(id, value) {
+			debugger;
+			if(value && id) {
+				//修改标识为已读
+				$.ajax({
+					url : "/data/play/updateFlag",
+					traditional : true,
+					dataType : "json",
+					type : 'POST',
+					data : {"id" : id},
+					success : function(resultData) {
+						debugger;
+						if (resultData.success) {
+							if(ifmProjectCode && ifmProjectName && ifmSampleCode && ifmSampleName) {
+								rowStyler(ifmProjectCode, ifmProjectName, ifmSampleCode, ifmSampleName);	
+							} else {
+								$.ajax({
+						            type: "POST", //提交数据的类型 分为POST和GET  
+						            async: false,
+						            url: "/data/play/list",  //提交url 注意url必须小写 
+						            data: {"page": 1, "rows": 100},
+						            success: function (data) {
+						                $('#dg').datagrid('loadData', data);
+						            }
+								});
+							}
+						} else {
+							$.messager.alert("系统提示", "系统异常，请稍后再试！");
+						}
+					}
+				});
+				$('#iframeOperationPlay').attr('src', "/data/playingImg.html");
+				$("#imgSrc").attr("value", "exception/img/" + value);
+				$("#dlg-operationPlay").dialog("open").dialog("setTitle", "异常图片");
+			} else {
+				$.messager.alert('温馨提示', "播放图片错误！", 'error');
+				return false;
+			}
+		};
+		function deleteOneGrid() {
+			var selectedRows = $("#dg").datagrid("getSelections");
+			if (selectedRows.length == 0) {
+				$.messager.alert("系统提示", "请选择要删除的数据！");
+				return;
+			}
+			var strIds = [];
+			for (var i = 0; i < selectedRows.length; i++) {
+				strIds.push(selectedRows[i].id);
+			}
+			var ids = strIds.join(",");
+			$.messager.confirm("系统提示", "您确定要删除这条数据吗?", function(r) {
+				if (r) {
+					$.post("/data/play/delete", {
+						ids : ids
+					}, function(result) {
+						if (result.success) {
+							$.messager.alert("系统提示", "数据已成功删除！");
+							searchQuery();
+						} else {
+							$.messager.alert("系统提示", result.errorInfo);
+						}
+					}, "json");
+				}
+			});
+		};
+	</script>
+</body>
+</html>

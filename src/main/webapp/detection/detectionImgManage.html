@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>监控设置</title> 
+</head>
+<body>
+    <div class="container">
+       <div class="row">
+        <form id="fm" method="post">
+        <table cellspacing="0px" style="margin:auto;">
+          <tr>
+            <br/>
+            <td>相机名称：
+              <input id="photoCode" type="text" name="photoCode" style="display: none"/>
+              <input type="text" id="photoName" name="photoName" class="easyui-validatebox" readonly="true" required="true"/>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+          <tr>
+            <td>流程主题：
+              <input type="text" id="projectName" name="projectName" class="easyui-validatebox" readonly="true" required="true"/>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+          <tr>
+            <td>检测编号：
+              <input type="text" id="detectionCode" name="detectionCode" readonly="true" class="easyui-validatebox" required="true"/>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+          <tr>
+            <td>检测名称：
+              <input type="text" id="detectionName" name="detectionName" class="easyui-validatebox" required="true" />
+              <br/>
+              <br/>
+            </td>
+          </tr>
+          <tr>
+            <td>设置日期：
+              <input type="text" id="createTime" readonly="true" />
+              <br/>
+              <br/>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input id="videoSet1" type="radio" name="detectionType" style="width: 20px" value="1" ></input><label for="videoSet1">运动</label>
+                    <input id="videoSet2" type="radio" name="detectionType" style="width: 20px" value="2"></input><label for="videoSet2">数字识别</label>
+                    <input id="videoSet3" type="radio" name="detectionType" style="width: 20px" value="3"></input><label for="videoSet3">颜色</label>
+              <br/>
+              <br/>
+            </td>
+          </tr>
+        </table>
+      </form>
+    <!-- </div>
+        <div class="row"> -->
+            <ul name="" class="type">
+                <!-- <li class="line typeactive" data="line">直&nbsp;&nbsp;&nbsp;线</li> -->
+                <li class="rect typeactive" data="rect">矩&nbsp;&nbsp;&nbsp;形</li>
+                <li class="circle" data="circle">圆&nbsp;&nbsp;&nbsp;圈</li>
+                <!-- <li class="pen" data="pen">铅&nbsp;&nbsp;&nbsp;笔</li>
+                <li class="poly" data="poly">多&nbsp;边&nbsp;形
+                    <div class="bian"><span>边数</span><input type="number" name="number" min="3" value="3" max="15"></div>
+                </li> -->
+                <!-- <li class="eraser" data="eraser">橡&nbsp;&nbsp;&nbsp;皮</li> -->
+            </ul>
+            <!-- <ul class="style">
+                <li class="stroke styleactive">描&nbsp;&nbsp;&nbsp;边</li>
+                <li class="fill">填&nbsp;&nbsp;&nbsp;充</li>
+            </ul> 
+            <div class="space"></div>-->
+            <div class="box" style="display:none;"><span>颜色</span></label><input type="color" name="color" value="#ff0000"></div>
+            <div class="box linewidth" style="display:none;"><span>线宽</span><input type="number" name="number" value="1" max="150" min="1"></div>
+            <div class="space" style="display:none;"></div>
+            <div class="create shezhi" style="display:none;">新&nbsp;&nbsp;&nbsp;建
+                <div class="xinjian">
+                    <h6>画 板 尺 寸</h6>
+                    <div class="xinjian_width">
+                        <span>宽</span>
+                        <input type="number" max="1070" min="500" value="500">
+                    </div>
+                    <div class="xinjian_height">
+                        <span>高</span>
+                        <input type="number" max="648" min="300" value="300">
+                    </div>
+                    <input type="button" name="queding" value="确定" id="ding">
+                    <div class="xinjian_before">+</div>
+                </div>
+            </div>
+            <!-- <div class="clear shezhi">清&nbsp;&nbsp;&nbsp;空</div> -->
+            <div class="back shezhi">撤&nbsp;&nbsp;&nbsp;销</div>
+            <div class="save shezhi">保&nbsp;&nbsp;&nbsp;存</div>
+            <div class="close shezhi">关&nbsp;&nbsp;&nbsp;闭</div>
+            <!-- <div class="cut shezhi" data="cut">剪&nbsp;&nbsp;&nbsp;切</div>
+            <div class="copy shezhi">复&nbsp;&nbsp;&nbsp;制</div> -->
+        </div>
+    </div>
+  <canvas id="canvas">
+    	您的浏览器不支持canvas标签，请您更换浏览器！
+  </canvas>
+</body>
+<link rel="stylesheet" type="text/css" href="./css/detectionImgManage.css"></link>
+<script src="./js/detectionImgManage.js"></script>
+<!-- <script src="./js/jquery-1.10.2.js"></script> -->
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/static/js/date.js"></script>
+<script>
+$(function(){
+	//使用正则表达式截取url地址参数
+	getQuery = function(ifmSrc, name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+		var r = ifmSrc.substr(ifmSrc.indexOf("\?") + 1).match(reg);
+		if (r != null)
+			return unescape(r[2]);
+		return null;
+	};
+	debugger;
+	//获取传入参数id
+	var ifmSrc = $(window.parent.document).find("#ifm").attr("src");
+	var projectId = getQuery(ifmSrc, "projectId");
+	if (!projectId) {
+		$.messager.alert("系统提示", "系统异常，请稍后重试！");
+		return false;
+	};
+	//初始化form表单
+	initForm();
+	$.ajax({
+		data : {
+			"projectId" : projectId
+		},
+		url : "/detection/manager/findInitData",
+		traditional : true,
+		dataType : "json",
+		type : 'POST',
+		success : function(result) {
+			if (result) {
+				debugger;
+				$("#fm").form("load", result);
+			} else {
+				$.messager.alert("系统提示", result.errorInfo);
+			}
+		}
+	});
+
+	debugger;
+	var screenWidth = $(parent).width();
+	var screenHeight = $(parent).height();
+	var container = $(".container");
+	//获取canvas对象
+	var canvas = document.querySelector("canvas");
+	var width = screenWidth - 295;
+	var height = screenHeight - 15;
+	canvas.width = width;
+	canvas.height = height;
+	var obj = canvas.getContext("2d");
+
+	// 创建img对象
+	var img = document.createElement('img');
+	// 设置src值
+	img.src = encodeURI("./test.png");
+	//设置canvas属性
+	img.onload = function() {
+		debugger;
+		canvas.style.backgroundImage = 'url("' + img.src + '")';//改动这行
+
+		var typechoose = $(".type li");
+		var stylechoose = $(".style li");
+		var colorchoose = document.querySelector("input[type=color]");
+		var widthchoose = document.querySelector(".linewidth input[type=number]");
+		var canvasWidth = document.querySelector(".xinjian_width input[type=number]");
+		var canvasHeight = document.querySelector(".xinjian_height input[type=number]");
+		canvasWidth.value = width;
+		canvasHeight.value = height;
+		canvasWidth.max = screenWidth - 295;
+		canvasHeight.max = screenHeight - 15;
+		var ding = document.querySelector("#ding");
+		var poly = $(".poly");
+		var bian = $(".bian");
+		var polychoose = $(".bian input");
+		var shezhi = $(".shezhi");
+		var cut = $(".cut");
+		var copy = $(".copy");
+		var back = $(".back");
+		var clear = $(".clear");
+		var save = $(".save");
+		var create = $(".create");
+		var xinjian = $(".xinjian");
+		var close = $(".close");
+		var create_close = $(".xinjian_before");
+		var cutflag = false;
+		var iscut = true;
+		var color = "#ff0000";
+		//var type="line";
+		var type = "rect";
+		var n = 3;
+		var linewidth = "1";
+		var style = "stroke";
+		var arr = [];
+
+		var listX = [];//用于保存画图X坐标
+		var listY = [];//用于保存画图Y坐标
+		var listWidth = [];//用于保存画图宽度坐标
+		var listHeight = [];//用于保存画图高度坐标
+		var listType = [];//用于报错画图类型
+
+		$(".fill").css({
+			display : "none"
+		});
+		// 多边形
+		poly.hover(function() {
+			bian.fadeIn();
+		}, function() {
+			bian.fadeOut();
+		})
+		// 绘制形状
+		typechoose.each(function(index, ele) {
+			$(ele).click(function() {
+				typechoose.removeClass("typeactive");
+				$(this).toggleClass("typeactive");
+				cut.css({
+					color : "#fff",
+					backgroundColor : "#5bd219",
+					opacity : 1
+				});
+				copy.css({
+					color : "#fff",
+					backgroundColor : "#5bd219",
+					opacity : 1
+				});
+				type = $(this).attr("data");
+				if ($(this).is(".line") || $(this).is(".pen")) {
+					style = "stroke";
+					$(".stroke").addClass("styleactive");
+					$(".fill").css({
+						display : "none"
+					}).removeClass("styleactive");
+				} else {
+					$(".fill").css({
+						display : "block"
+					});
+				}
+			})
+		})
+		// 描边、填充单击事件
+		stylechoose.each(function(index, ele) {
+			$(ele).click(function() {
+				style = $(this).attr("class");
+				stylechoose.removeClass("styleactive");
+				$(this).toggleClass("styleactive");
+			})
+		})
+		// 剪切
+		cut.click(function() {
+			type = $(this).attr("data");
+			typechoose.removeClass("typeactive");
+			$(this).css({
+				color : "#5bd219",
+				backgroundColor : "#fff"
+			}).toggleClass("shezhistyle");
+			iscut = true;
+		})
+		copy.click(function() {
+			type = "cut";
+			typechoose.removeClass("typeactive");
+			$(this).css({
+				color : "#5bd219",
+				backgroundColor : "#fff"
+			}).toggleClass("shezhistyle");
+			iscut = false;
+		})
+		// 设置
+		shezhi.each(function(index, ele) {
+			if ($(ele).is(".cut") || $(ele).is(".copy")) {
+				return;
+			} else {
+				$(ele).click(function() {
+					$(this).css({
+						color : "#5bd219",
+						backgroundColor : "#fff"
+					}).animate({
+						opacity : 0.99
+					}, 200, function() {
+						$(this).css({
+							color : "#fff",
+							backgroundColor : "#5bd219",
+							opacity : 1
+						});
+					});
+				})
+			}
+		})
+		// 清除
+		clear.click(function() {
+			arr = [];
+			obj.clearRect(0, 0, width, height);
+			listX = [];
+			listY = [];
+			listWidth = [];
+			listHeight = [];
+			listType = [];
+		})
+		// 保存
+		save.click(function() {
+			debugger;
+			if (listX.length > 0 && listY.length > 0
+					&& listWidth.length > 0 && listHeight.length > 0
+					&& listType.length > 0) {
+				if ($("#fm").form("validate")) {
+					$.ajax({
+						data : {
+							"photoCode" : $("#photoCode").val(),
+							"photoName" : $("#photoName").val(),
+							"projectName" : $("#projectName").val(),
+							"detectionCode" : $("#detectionCode").val(),
+							"detectionName" : $("#detectionName").val(),
+							"detectionType" : $(
+									"input[type='radio']:checked").val(),
+							"listX" : listX,
+							"listY" : listY,
+							"listWidth" : listWidth,
+							"listHeight" : listHeight,
+							"listType" : listType,
+							"projectId" : projectId,
+							"canvasWidth" : width + "",
+							"canvasHeight" : height + ""
+						},
+						url : "/detection/manager/saveImg",
+						traditional : true,
+						dataType : "json",
+						type : 'POST',
+						success : function(result) {
+							if (result.success) {
+								//保存成功，清除画板
+								/* arr=[];
+								    //obj.clearRect(0,0,width,height);
+								    listX=[];
+								    listY=[];
+								    listWidth=[];
+								    listHeight=[];
+								    listType=[]; */
+								$.messager.alert("系统提示", "操作成功");
+								//初始化form表单
+								//initForm();
+								//刷新列表数据
+								/* typeof window.top.reload_taskTab === 'function'
+								  && window.top.reload_taskTab.call(); */
+							} else {
+								$.messager.alert("系统提示", result.errorInfo);
+							}
+						}
+					});
+				}
+			} else {
+				$.messager.alert("温馨提示", "请进行绘制图形");
+			}
+		})
+		// 关闭页面
+		close.click(function() {
+			debugger;
+			var jq = top.jQuery;
+			var currTab = jq("#tabs").tabs('getSelected');
+
+			/* if (jq("#tabs").tabs('exists', "检测管理")) {
+			  jq('#tabs').tabs('select', "检测管理");
+			}
+			typeof window.top.reload_taskTab === 'function'
+			    && window.top.reload_taskTab.call(); */
+
+			currTitle = currTab.panel('options').title;
+			jq('#tabs').tabs('close', currTitle);
+			//var topTab = jq("#tabs").tabs("getTab", "检测管理");
+		})
+		// 新建画布
+		create.click(function() {
+			xinjian.fadeIn();
+		})
+		create_close.click(function(e) {
+			e.stopPropagation()
+			xinjian.fadeOut();
+		})
+		canvasWidth.onblur = function() {
+			if (this.value <= this.min) {
+				this.value = this.min;
+			}
+			if (this.value >= screenWidth - 295) {
+				this.value = screenWidth - 295;
+			}
+			width = this.value;
+		}
+		canvasHeight.onblur = function() {
+			if (this.value <= this.min) {
+				this.value = this.min;
+			}
+			if (this.value >= screenHeight - 15) {
+				this.value = screenHeight - 15;
+			}
+			height = this.value;
+		}
+		ding.onclick = function(e) {
+			canvas.width = width;
+			canvas.height = height;
+			canvas.style.left = (screenWidth + 295 - canvas.width) / 2 + "px";
+			canvas.style.top = (screenHeight - 5 - canvas.height) / 2 + "px";
+			arr = [];
+			obj.clearRect(0, 0, width, height);
+			e.stopPropagation()
+			xinjian.fadeOut();
+		}
+		// 颜色选择
+		colorchoose.onchange = function() {
+			color = this.value;
+		}
+		// 粗细改变
+		widthchoose.onchange = function() {
+			linewidth = this.value;
+		}
+		//多边形边数
+		polychoose.change(function() {
+			n = this.value;
+		})
+		// 撤销
+		back.click(function() {
+			debugger;
+			arr.pop();
+			obj.clearRect(0, 0, width, height);
+			if (arr.length > 0) {
+				obj.putImageData(arr[arr.length - 1], 0, 0, 0, 0, width, height);
+			}
+			listX.pop();
+			listY.pop();
+			listWidth.pop();
+			listHeight.pop();
+			listType.pop();
+		})
+		
+		var x, y, w, h;
+		var lx, ly, lw, lh;
+		var cutdata;
+		canvas.onmousedown = function(e) {
+			//x=e.offsetX;
+			//y=e.offsetY;
+			//x = e.pageX - canvas.getBoundingClientRect().left;
+			//y = e.pageY - canvas.getBoundingClientRect().top;
+			var rect = canvas.getBoundingClientRect();
+			x = e.clientX - rect.left * (canvas.width / rect.width);
+			y = e.clientY - rect.top * (canvas.height / rect.height);
+			var booleandIsPoint = true;
+			
+			var cricle = function(type, x, y, x1, y1) {
+				this.type = type;
+				this.x = x;
+				this.y = y;
+				this.x1 = x1;
+				this.y1 = y1;
+				this.drawC = function(x, y) {
+					debugger;
+					if (this.type == "rect") {
+						//ctx.save();
+						obj.beginPath();
+						obj.rect(this.x, this.y, this.x1-this.x, this.y1-this.y);
+					} else {
+						return;
+					}
+					if (x && y && obj.isPointInPath(x, y)) {
+						obj.strokeStyle = "#000"; //黑色边框
+						obj.lineWidth = '3'; //边框粗细
+						booleandIsPoint = false;
+					} else {
+						obj.strokeStyle = color;
+						obj.lineWidth = linewidth;
+					}
+					obj.stroke();
+				}
+			}
+			//获取事件在canvas中发生的位置  
+			if (type == "pen") {
+				obj.beginPath();
+				obj.moveTo(x, y);
+			}
+			if (type == "eraser") {
+				obj.clearRect(x - 5, y - 5, 10, 10);
+			}
+			if (cutflag && type == "cut") {
+				if (arr.length != 0) {
+					arr.splice(-1, 1);
+				}
+			}
+			if (listX.length > 0 && x && y) {
+				debugger;
+				obj.clearRect(0, 0, width, height);
+				for (var i = 0; i < listX.length; i++) {
+					var c = new cricle(listType[i],listX[i],listY[i],listWidth[i],listHeight[i]);
+					c.drawC(x, y);
+				}
+			}
+			if(booleandIsPoint) {
+				var draw = new Draw(obj, {type : style,color : color,width : linewidth});//实例化构造函数
+			}
+			canvas.onmousemove = function(e) {
+				if(!booleandIsPoint){
+					return;
+				}
+				//w=e.offsetX;
+				//h=e.offsetY;
+				//w = e.pageX - canvas.getBoundingClientRect().left;
+				//h = e.pageY - canvas.getBoundingClientRect().top;
+				var rect = canvas.getBoundingClientRect();
+				w = e.clientX - rect.left * (canvas.width / rect.width);
+				h = e.clientY - rect.top * (canvas.height / rect.height);
+				if (type != "eraser") {
+					obj.clearRect(0, 0, width, height);
+					if (arr.length != 0) {
+						obj.putImageData(arr[arr.length - 1], 0, 0, 0, 0, width, height);
+					}
+				}
+				if (cutflag && type == "cut") {
+					if (iscut) {
+						obj.clearRect(lx, ly, lw - lx, lh - ly);
+					}
+					var nx = lx + (w - x);
+					var ny = ly + (h - y);
+					obj.putImageData(cutdata, nx, ny);
+				} else if (type == "poly") {
+					draw[type](x, y, w, h, n);
+				} else {
+					draw[type](x, y, w, h);
+				}
+			}
+			document.onmouseup = function() {
+				canvas.onmousemove = null;
+				document.onmouseup = null;
+				if(!booleandIsPoint){
+					return;
+				}
+				if (type == "cut") {
+					if (!cutflag) {
+						cutflag = true;
+						cutdata = obj.getImageData(x + 1, y + 1, w - x - 2, h - y - 2);
+						lx = x;
+						ly = y;
+						lw = w;
+						lh = h;
+						container.css({display : "none"});
+					} else {
+						cutflag = false;
+						container.css({display : "block"});
+					}
+				}
+				arr.push(obj.getImageData(0, 0, width, height));
+
+				listX.push(x);//添加X坐标
+				listY.push(y);//添加Y坐标
+				listWidth.push(w);//添加width坐标
+				listHeight.push(h);//添加height坐标
+				listType.push(type);
+			}
+		}
+
+			/*  var list=[];
+			var currentC;
+			var _e={};
+			 var cricle = function(x,y,r){
+			   this.x=x;
+			   this.y=y;
+			   this.r=r;
+			   this.isCurrent=false;
+			   this.drawC=function(ctx,x,y){
+			     ctx.save();
+			     ctx.beginPath();
+			     ctx.moveTo(this.x,this.y-this.r);
+			     //ctx.arc(this.x,this.y,this.r,2*Math.PI,0,true);
+			   if ((x && y && ctx.isPointInPath(x, y) && !currentC )||this.isCurrent) {
+			     ctx.strokeStyle="#000"; //黑色边框
+			     ctx.lineWidth='3'; //边框粗细
+			     currentC=this;
+			     this.isCurrent=true;
+			   }else{
+			     ctx.strokeStyle=color;
+			     ctx.lineWidth=linewidth;
+			   }
+			   ctx.stroke();
+			   }
+			 }
+			 function draw(){
+			 var canvas = document.getElementById('tutorial');
+			 if (canvas.getContext){
+			   var ctx = canvas.getContext('2d');
+			   for(var i=0;i<10;i++){
+			     var c=new cricle(20*i,20*i,5*i);
+			     c.drawC(ctx);
+			     list.push(c);
+			   }
+			 }
+			}
+			 function reDraw(e){
+			 e=e||event;
+			 var canvas = document.getElementById('tutorial');
+			 var x = e.clientX - canvas.offsetLeft;
+			 var y = e.clientY - canvas.offsetTop;
+			 canvas.width = canvas.width;
+			 if (canvas.getContext){
+			   var ctx = canvas.getContext('2d');
+			   for(var i=0;i<list.length;i++){
+			     var c=list[i];
+			     c.drawC(ctx,x,y);
+			   }
+			 }
+			}
+			 function show(e){
+			 e=e||event;
+			 var canvas = document.getElementById('tutorial');
+			 var ctx = canvas.getContext('2d');
+			 var x = e.clientX - canvas.offsetLeft;
+			 var y = e.clientY - canvas.offsetTop;
+			 if(currentC){
+			   currentC.x=parseInt(x+(x-currentC.x)/5);
+			   currentC.y=parseInt(y+(y-currentC.y)/5);
+			 }
+			 _e=e;
+			}
+			 
+			 var canvas = document.getElementById('tutorial');
+			draw();
+			canvas.onmousedown=function(e){
+			 e=e||event;
+			 var x = e.clientX - canvas.offsetLeft;
+			 var y = e.clientY - canvas.offsetTop;
+			 if(currentC)
+			   currentC.isCurrent=false;
+			 currentC=null;
+			 reDraw(e);
+			 _e=e;
+			 var showTimer=setInterval(function(e){
+			   reDraw(e);
+			 },10,_e);
+			 
+			 canvas.onmousemove=show;
+
+			 document.onmouseup=function(){
+			   if(currentC)
+			     currentC.isCurrent=false;
+			   currentC=null;
+			   canvas.onmousemove=null;
+			   clearInterval(showTimer);
+			 }
+			} */
+		}
+		//初始化form表单内容
+		function initForm() {
+			$("#fm").form('clear');
+			$("#videoSet1").prop("checked", true);
+			$("#createTime").val(genTodayStr());
+		}
+	});
+</script>
+</html>

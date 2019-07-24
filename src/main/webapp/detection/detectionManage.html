@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>检测区域管理</title>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/static/js/date.js"></script>
+
+<style type="text/css">
+	#basic-table td{  text-align: center;vertical-align:middle;}
+</style>
+
+<script type="text/javascript">
+	var url;
+
+	$(function() {
+		$("#photoCombobox").combobox({
+			onSelect : function(row) {
+				$("#photoCode").val(row.photoCode);
+			}
+		});
+		if($('#ifm', parent.document).length == 1) {
+			detectionInsertImg();
+		};
+	});
+	function searchQuery() {
+		$("#dg").datagrid('load', {
+			"detectionCode" : $("#detectionCode").val(),
+			"detectionName" : $("#detectionName").val(),
+			"createTimeStart" : $('#createTimeStart').datebox('getValue'),
+			"createTimeEnd" : $('#createTimeEnd').datebox('getValue')
+		});
+	};
+
+	function resetValue() {
+		$("#fm").form('clear');
+	}
+	function closeDialog() {
+		$("#dlg").dialog("close");
+		resetValue();
+	}
+
+	function save() {
+		if($("#fm").form("validate")) {
+			debugger;
+			$.ajax({
+                url : url,
+                type : 'post',
+                dataType : 'json',
+                data : $("#fm").serialize(),
+                success:function(result) {
+                    //回调函数 
+					if (result.success) {
+						$.messager.alert("系统提示", "保存成功！");
+						resetValue();
+						$("#dlg").dialog("close");
+						$("#dg").datagrid("reload");
+					} else {
+						$.messager.alert("系统提示", result.errorInfo);
+					}
+	        	}
+            });
+		}
+	}
+
+	function openAddDialog() {
+		$("#dlg").dialog("open").dialog("setTitle", "添加检测区域信息");
+		$("#videoSet1").prop("checked", true);
+		$("#createTime").datebox("setValue", genTodayStr());
+		url = "/detection/manager/save";
+	}
+
+	//修改跳转
+	function openModifyDialog() {
+		var selectedRows = $("#dg").datagrid("getSelections");
+		if (selectedRows.length != 1) {
+			$.messager.alert("系统提示", "请选择一条要修改的数据！");
+			return;
+		}
+		debugger;
+		var row = selectedRows[0];
+		detectionUpdateImg(row.id);
+		//$("#dlg").dialog("open").dialog("setTitle", "修改检测区域信息");
+		//$("#fm").form("load", row);
+		//$("#createTime").datebox("setValue", genTodayStr());
+		//url = "/detection/manager/save?id=" + row.id;
+	}
+
+	function deleteOneGrid() {
+		var selectedRows = $("#dg").datagrid("getSelections");
+		if (selectedRows.length == 0) {
+			$.messager.alert("系统提示", "请选择要删除的数据！");
+			return;
+		}
+		var strIds = [];
+		for (var i = 0; i < selectedRows.length; i++) {
+			strIds.push(selectedRows[i].id);
+		}
+		var ids = strIds.join(",");
+		$.messager.confirm("系统提示", "您确定要删除这条数据吗?", function(r) {
+			if (r) {
+				$.post("/detection/manager/delete", {
+					ids : ids
+				}, function(result) {
+					if (result.success) {
+						$.messager.alert("系统提示", "数据已成功删除！");
+						$("#dg").datagrid("reload");
+					} else {
+						$.messager.alert("系统提示", result.errorInfo);
+					}
+				}, "json");
+			}
+		});
+	}
+
+	Date.prototype.format = function(format) {
+		var o = {
+			"M+" : this.getMonth() + 1, // 月
+			"d+" : this.getDate(), // 天
+			"h+" : this.getHours(), // 时
+			"m+" : this.getMinutes(), // 分
+			"s+" : this.getSeconds(), // 秒
+			"q+" : Math.floor((this.getMonth() + 3) / 3), // 刻
+			"S" : this.getMilliseconds()
+		}
+		if (/(y+)/.test(format))
+			format = format.replace(RegExp.$1, (this.getFullYear() + "")
+					.substr(4 - RegExp.$1.length));
+		for ( var k in o)
+			if (new RegExp("(" + k + ")").test(format))
+				format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k]
+						: ("00" + o[k]).substr(("" + o[k]).length));
+		return format;
+	}
+
+	function formatDatebox(value) {
+		if (value == null || value == '') {
+			return '';
+		}
+		var dt;
+		if (value instanceof Date) {
+			dt = value;
+		} else {
+			dt = new Date(value);
+		}
+		return dt.format("yyyy-MM-dd"); //扩展的Date的format方法(上述插件实现)
+	}
+
+	function formatDetectionType(value) {
+		if (value == null || value == '') {
+			return '';
+		}
+		if (value == '1') {
+			return "运动";
+		} else if (value == '2') {
+			return "数字识别";
+		} else {
+			return "颜色";
+		}
+	}
+</script>
+</head>
+<body class="easyui-layout">
+	<div data-options="region:'north'" style="height: 135px;padding: 10px;border: 0px;padding-top: 20px">
+		<fieldset style="border-color: #E7F0FF">
+		<legend>查询区域</span></legend>
+			<form id="queryFrom" method="post">
+				<table cellspacing="8px">
+					<tr>
+						<td>检测区域编号：</td>
+						<td>
+							<input type="text" id="detectionCode" name="detectionCode" class="easyui-textbox" />
+						</td>
+						<td>检测区域名称：</td>
+						<td>
+							<input type="text" id="detectionName" name="detectionName" class="easyui-textbox" />
+						</td>
+					</tr>
+					<tr>
+						<td>设置开始时间：</td>
+						<td>
+							<input type="text" id="createTimeStart" name="createTimeStart" class="easyui-datebox" />
+						</td>
+						<td>设置结束时间：</td>
+						<td>
+							<input type="text" id="createTimeEnd" name="createTimeEnd" class="easyui-datebox" />
+						</td>
+						<td>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<a href="javascript:searchQuery()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</fieldset>
+	</div>
+	
+	<div data-options="region:'center'" style="padding: 10px;border: 1px">
+		<table id="dg" class="easyui-datagrid" style="height:1200px" pageSize="20" 
+			fitColumns="true" pagination="true" rownumbers="true" url="/detection/manager/list" fit="true" fit="true" toolbar="#tb">
+			<thead>
+				<th field="cb" checkbox="true" align="center"></th>
+				<th field="detectionCode" width="100" align="center">检测区域编号</th>
+				<th field="detectionName" width="100" align="center">检测区域名称</th>
+				<th field="photoName" width="100" align="center">相机名称</th>
+				<th field="detectionType" width="100" align="center" data-options="formatter:formatDetectionType">检测区域类型</th>
+				<th field="createTime" width="100" align="center" data-options="formatter:formatDatebox">设置日期</th>
+				<th field="detectionLeftx" width="100" align="center">X坐标</th>
+				<th field="detectionLefty" width="100" align="center">Y坐标</th>
+				<th field="detectionWidth" width="100" align="center">宽度</th>
+				<th field="detectionHeight" width="100" align="center">高度</th>
+			</thead>
+		</table>
+		<div id="tb">
+			<div style="padding: 2px">
+				<a href="javascript:detectionInsertImg()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a>
+				<a href="javascript:openModifyDialog()" class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a>
+				<a href="javascript:deleteOneGrid()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+			</div>
+		</div>
+	</div>
+	
+	<div id="dlg" class="easyui-dialog" style="width: 900%;height: 400%; text-align:center; margin: 0px auto;"
+		closed="true" buttons="#dlg-buttons" data-options="onClose:function(){resetValue()}">
+			<form id="fm" method="post">
+				<table cellspacing="60px" style="margin:auto;">
+					<tr>
+						<td>相机名称：</td>
+						<td>
+							<input id="photoCode" name="photoCode" type="text" style="display:none" />
+							<input id="photoCombobox" class="easyui-combobox" name="photoName" style="width: 180px" 
+							required="true" data-options="required:true,panelHeight:'auto',valueField:'photoName',textField:'photoName',url:'/photo/manager/comboList'"/>
+						</td>
+						<td>检测区域编号：</td>
+						<td>
+							<input type="text" name="detectionCode" class="easyui-validatebox" required="true" style="width: 180px"/>
+						</td>
+					</tr>
+					<tr>
+						<td>检测区域名称：</td>
+						<td>
+							<input type="text" name="detectionName" class="easyui-validatebox" required="true" style="width: 180px"/>
+						</td>
+						<td>设置日期：</td>
+						<td>
+							<input type="text" id="createTime" class="easyui-datebox" required="true" data-options="disabled:true" style="width:180px" />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<input id="videoSet1" type="radio" name="detectionType" style="width: 50px" value="1" ></input><label for="videoSet1">运动</label>
+	            			<input id="videoSet2" type="radio" name="detectionType" style="width: 50px" value="2"></input><label for="videoSet2">数字识别</label>
+	            			<input id="videoSet3" type="radio" name="detectionType" style="width: 50px" value="3"></input><label for="videoSet3">颜色</label>
+						</td>
+					</tr>
+				</table>
+			</form>
+		<div id="dlg-buttons">
+			<a href="javascript:save()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+			<a href="javascript:closeDialog()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		//跳转“图片绘制页面”
+		function detectionInsertImg() {
+			debugger;
+			var jq = top.jQuery;
+			var content3="<iframe id='ifm' frameborder=0 scrolling='auto' style='width:100%;height:99%' src='/detection/detectionImgManage.html'></iframe>";
+			jq("#tabs").tabs("add", {
+				title : "图片绘制",
+				iconCls : "menu-11",
+				closable : true,
+				content : content3
+			});
+		};
+	
+		//跳转修改“图片绘制页面”
+		function detectionUpdateImg(id) {
+			debugger;
+			var jq = top.jQuery;
+			var content4="<iframe id='ifm2' frameborder=0 scrolling='auto' style='width:100%;height:99%' src='/detection/detectionImgUpdateManage.html?id=" + id + "'></iframe>";
+			jq("#tabs").tabs("add", {
+				title : "图片绘制修改",
+				iconCls : "menu-11",
+				closable : true,
+				content : content4
+			});
+		};
+		
+		/**
+		 * 刷新指定的tab里面的数据
+		 * @param title 选项卡标题
+		 * @param refreshTabFunc  自定义的刷新方法(再各个页面具体实现)
+		 */
+		function refreshTabData(title) {
+			var jq = top.jQuery;
+			if (jq("#tabs" ).tabs('exists', title)) {
+				jq('#tabs').tabs('select' , title);
+				datagrid.reload("#dg");   
+		    }
+		};
+
+		window.top["reload_taskTab"] = function() {
+			$("#dg").datagrid("reload");
+		};
+	</script>
+</body>
+</html>

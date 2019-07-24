@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>获取画面</title>
+<link rel="stylesheet" type="text/css" href="../index/monitor/demo.css"></link>
+<script type="text/javascript" src="../index/monitor/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../index/monitor/webVideoCtrl.js"></script>
+<style type="text/css">
+	html { overflow-x: hidden; overflow-y: hidden; }
+	body {
+	  text-align: center;
+	}
+	#u4_div {
+	  padding-bottom:100%;
+	  box-sizing: border-box;
+	  margin-left: 38px;
+	  margin-right: 38px;
+	  background-color:#434343;
+	  color:#FFFFFF;
+	}
+	#u24 {
+	    margin-left: 38px;
+	    margin-right: 38px;
+	    margin-top: 8px;
+	    width: auto;
+	    height: 36px;
+	    font-size: 18px;
+	}
+	.get_butto_class {
+		font-size:16px;
+		font-family:Arial Black;
+		font-weight:normal;
+		-moz-border-radius:10px;
+		-webkit-border-radius:10px;
+		border-radius:10px;
+		border:0px solid #337fed;
+		padding:6px 18px;
+		text-decoration:none;
+		background:-webkit-gradient( linear, left top, left bottom, color-stop(45%, #3d94f6), color-stop(60%, #1e62d0) );
+		background:-moz-linear-gradient( center top, #3d94f6 45%, #1e62d0 60% );
+		background:-ms-linear-gradient( top, #3d94f6 45%, #1e62d0 60% );
+		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#3d94f6', endColorstr='#1e62d0');
+		background-color:#3d94f6;
+		color:#ffffff;
+		display:inline-block;
+		text-shadow:1px 1px 0px #1570cd;
+	 	-webkit-box-shadow:inset 1px 1px 0px 0px #97c4fe;
+	 	-moz-box-shadow:inset 1px 1px 0px 0px #97c4fe;
+	 	box-shadow:inset 1px 1px 0px 0px #97c4fe;
+	}.get_butto_class:hover {
+		background:-webkit-gradient( linear, left top, left bottom, color-stop(45%, #1e62d0), color-stop(60%, #3d94f6) );
+		background:-moz-linear-gradient( center top, #1e62d0 45%, #3d94f6 60% );
+		background:-ms-linear-gradient( top, #1e62d0 45%, #3d94f6 60% );
+		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#1e62d0', endColorstr='#3d94f6');
+		background-color:#1e62d0;
+	}.get_butto_class:active {
+		position:relative;
+		top:1px;
+	}
+</style>
+</head>
+<body>
+	<div id="u24" style="text-align: right;">
+		<a href="javascript:getButtoClass()" class="get_butto_class">获取图像</a>
+	</div>
+	<div id="u4_div">
+		<div id="divPlugin"></div>
+	</div>
+</body>
+<script type="text/javascript">
+	//初始化内容
+	var g_iWndIndex = 0; //可以不用设置这个变量，有窗口参数的接口中，不用传值，开发包会默认使用当前选择窗口
+	var photoCode = null;
+	var photoIp = null;
+	var photoPort = null;
+	var photoLogoName = null;
+	var photoLogoPassword = null;
+	$(function() {
+		debugger;
+		//使用正则表达式截取url地址参数
+		getQuery = function(ifmSrc, name) {
+			var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+			var r = ifmSrc.substr(ifmSrc.indexOf("\?") + 1).match(reg);
+			if (r != null)
+				return unescape(r[2]);
+			return null;
+		}
+		//获取传入参数id
+		var ifmSrc = $(window.parent.document).find("#ifm").attr("src");
+		photoCode = getQuery(ifmSrc, "photoCode");
+		
+		if(photoCode) {
+			$.ajax({
+				url : "/photo/manager/findByPhotoCode",
+				dataType : "json",
+				type : 'POST',
+				data : {"photoCode" : photoCode},
+				success : function(result) {
+					var photoManager = result.photoManager;
+					if (result.success && photoManager) {
+						debugger;
+						if(photoManager.codeType == "H264文件流") {
+							$("#divPlugin").remove();
+							var iWidth = $("#u4_div").innerWidth();
+							var u24 = $("#u24").height();
+							var iHeight = document.documentElement.clientHeight-u24;
+							$("#u4_div").append('<video id="videoid" style="width:'+iWidth+'px; height:'+iHeight+'px;" controls="controls"><source id="video_path" src="" type="video/mp4" /></video>');
+							// 自动播放
+							document.getElementById("videoid").src="../index/video/"+photoManager.file;
+							document.getElementById("videoid").play();
+						} else {
+							//加载视频展示
+							photoIp = photoManager.photoIp;
+							photoPort = photoManager.photoPort;
+							photoLogoName = photoManager.photoLogoName;
+							photoLogoPassword = photoManager.photoLogoPassword;
+							// 检查插件是否已经安装过
+							var iRet = WebVideoCtrl.I_CheckPluginInstall();
+							if (-2 == iRet) {
+								alert("您的Chrome浏览器版本过高，不支持NPAPI插件！");
+								return;
+							} else if (-1 == iRet) {
+								debugger;
+								/* try {
+									$.messager.confirm("系统提示", "您还未安装WebComponents.exe，是否安装?",function(r){
+										if(r){
+											debugger;
+											var objShell = new ActiveXObject("wscript.shell");
+											objShell.Run("file:///D:/WebComponents.exe");
+											objShell = null;
+										} else {
+											alert("您还未安装过插件，请进行WebComponentsKit.exe安装！");
+											return;
+										}
+										var iRet = WebVideoCtrl.I_CheckPluginInstall();
+										if(iRet == 0) {
+											initWebVideoCtrl();
+										}
+									});
+								} catch (e) {
+									alert("您还未安装过插件，请进行WebComponentsKit.exe安装！");
+									return;
+								} */
+								return false;
+							} else {
+								initWebVideoCtrl();
+								window.setTimeout(function() {
+									loginView(photoManager.photoIp, photoManager.photoPort, photoManager.photoLogoName, photoManager.photoLogoPassword);	
+								}, 500);
+							}
+						}
+					} else {
+						$.messager.alert("系统提示", "请稍后重试！");
+					}
+				}
+			});
+		} else {
+			$.messager.alert("系统提示", "系统异常，请稍后重试！");
+			return false;
+		}
+		//初始化加载监控播放
+		function initWebVideoCtrl() {
+			debugger;
+			var iWidth = $("#u4_div").innerWidth();
+			var u24 = $("#u24").height();
+			var iHeight = document.documentElement.clientHeight-u24;
+			var oPlugin = {
+				iWidth : iWidth, // plugin width
+				iHeight : iHeight // plugin height
+			};
+			// 初始化插件参数及插入插件
+			WebVideoCtrl.I_InitPlugin(oPlugin.iWidth, oPlugin.iHeight, {
+				bWndFull : true,//是否支持单窗口双击全屏，默认支持 true:支持 false:不支持
+				iWndowType : 1,
+				cbSelWnd : function(xmlDoc) {
+					g_iWndIndex = parseInt($(xmlDoc).find("SelectWnd").eq(0).text(), 10);
+				}
+			});
+			WebVideoCtrl.I_InsertOBJECTPlugin("divPlugin");
+			// 检查插件是否最新
+			/* if (-1 == WebVideoCtrl.I_CheckPluginVersion()) {
+				alert("检测到新的插件版本，双击开发包目录里的WebComponentsKit.exe升级！");
+				return;
+			} */
+		}
+		//加载视频展示
+		function loginView(playPhotoIP, playPhotoPost, playPhotoUserName, playPhotoPassword) {
+			debugger;
+			var oLiveView = {
+				iProtocol : 1, // protocol 1：http, 2:https
+				szIP : playPhotoIP, // protocol ip
+				szPort : playPhotoPost, // protocol port
+				szUsername : playPhotoUserName, // device username
+				szPassword : playPhotoPassword, // device password
+				iStreamType : 1, // stream 1：main stream  2：sub-stream  3：third stream  4：transcode stream
+				iChannelID : 1, // channel no
+				bZeroChannel : false
+			};
+			// 登录设备
+			WebVideoCtrl.I_Logout(oLiveView.szIP);
+			var iRet = WebVideoCtrl.I_Login(oLiveView.szIP, oLiveView.iProtocol,
+				oLiveView.szPort, oLiveView.szUsername, oLiveView.szPassword, {
+					success : function(xmlDoc) {
+						debugger;
+						//g_iWndIndex = parseInt($(xmlDoc).find("SelectWnd").eq(0).text(), 10);
+						// 开始预览
+						WebVideoCtrl.I_StartRealPlay(oLiveView.szIP, {
+							iStreamType : oLiveView.iStreamType,
+							iChannelID : oLiveView.iChannelID,
+							bZeroChannel : oLiveView.bZeroChannel
+					});
+				}
+			});
+			window.setTimeout(function() {
+				debugger;
+				if (-1 == iRet) {
+					var i_Stop = WebVideoCtrl.I_Stop();
+					if(i_Stop == 0){
+						var startRealPlay = WebVideoCtrl.I_StartRealPlay(oLiveView.szIP, {
+							iStreamType : oLiveView.iStreamType,
+							iChannelID : oLiveView.iChannelID,
+							bZeroChannel : oLiveView.bZeroChannel
+						});
+					}
+				}
+			}, 2000);
+		}
+	});
+	//获取图像，暂停并截图
+	function getButtoClass() {
+		debugger;
+		if(photoIp && photoPort && photoLogoName && photoLogoPassword) {
+			//var i_Pause = WebVideoCtrl.I_Pause();
+			//var i_Stop = WebVideoCtrl.I_Stop();
+			clickCapturePic();
+			/*  else {
+				WebVideoCtrl.I_Resume();
+			} */
+		} else {
+			//$.messager.alert("系统提示", "系统异常，请稍后重试！");
+		}
+	};
+	// 抓图
+	function clickCapturePic() {
+		debugger;
+		if(photoCode) {
+			$.ajax({
+				data : {"photoCode" : photoCode},
+				url : "/detection/manager/capturePic",
+				dataType : "json",
+				type : 'POST',
+				success : function(result) {
+					if (result.success) {
+						if(confirm("是否使用该图像？")) {
+							//关闭当前页面
+							var jq = top.jQuery;
+							var currTab = jq("#tabs").tabs('getSelected');
+							currTitle = currTab.panel('options').title;
+							jq('#tabs').tabs('close', currTitle);
+							return false;
+						}
+					} else {
+						$.messager.alert("系统提示", result.errorInfo);
+						return false;
+					}
+				}
+			});
+		}
+	};
+</script>	
+<link rel="stylesheet" type="text/css" href="/static/css/button.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+</html>

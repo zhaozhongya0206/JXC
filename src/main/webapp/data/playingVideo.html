@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>异常视频</title>
+<style type="text/css">
+* {
+  outline: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+</style>
+</head>
+<body>
+	<div>
+		<video id="videoid" style="width: 100%; height: 100%;" controls="controls">
+			<source id="video_path" src="" type="video/mp4" />
+		</video>
+	</div>
+</body>
+<script type="text/javascript">
+	debugger;
+	var videoSrc = window.parent.document.getElementById("videoSrc").value;
+	if (videoSrc) {
+		// 自动播放
+		document.getElementById("videoid").src=videoSrc;
+	 	document.getElementById("videoid").play();
+	}
+</script>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>异常图片</title>
+</head>
+<body>
+	<img id="imgId" style="width: 100%; height: 100%;" src="" />
+</body>
+<script type="text/javascript">
+	var imgSrc = window.parent.document.getElementById("imgSrc").value;
+	if(imgSrc) {
+		document.getElementById("imgId").src=imgSrc;
+	}
+</script>
+</html>

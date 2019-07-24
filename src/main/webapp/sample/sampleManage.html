@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>样品管理</title>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/css/button.css"></link>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript">
+	var url;
+
+	$(function() {
+		$("#dg4").datagrid({
+			onClickRow:function(index,row){
+				$("#projectCode").val(row.projectCode);
+				$("#projectName").val(row.projectName);
+				closeProjectCode();
+			}
+		});
+		if($('#ifm', parent.document).length == 1) {
+			//openAddDialog();
+		}
+	});
+	
+	/************项目信息弹出框***************/
+	function openProjectCode($this){
+		debugger;
+		var left = $($this).offset().left;
+		var top = $($this).offset().top + 30;
+		$('#dlg4').window('open').window('resize',{top: top,left:left});
+		$("#dg4").datagrid("reload");
+	}
+	//关闭弹框
+	function closeProjectCode(){
+		$("#dlg4").dialog("close");
+	}
+	/*************弹框信息 end ******************/
+	
+	function searchQuery() {
+		$("#dg").datagrid('load', {
+			"sampleCode" : $("#sampleCode").val(),
+			"sampleName" : $("#sampleName").val()
+		});
+	};
+	
+	//清空form表单查询条件
+	function clearQuery() {
+		$("#queryFrom").form('clear');
+	};
+	function resetValue() {
+		$("#fm").form('clear');
+	}
+	function closeDialog() {
+		$("#dlg").dialog("close");
+		resetValue();
+	}
+	function save() {
+		if($("#fm").form("validate")) {
+			debugger;
+			$.ajax({
+                url : url,
+                type : 'post',
+                dataType : 'json',
+                data : $("#fm").serialize(),
+                success:function(result) {
+                    //回调函数 
+					if (result.success) {
+						$.messager.alert("系统提示", "保存成功！");
+						if($('#ifm', parent.document).length == 1) {
+							debugger;
+							var jq = top.jQuery;
+							var currTab = jq("#tabs").tabs('getSelected');
+
+							if (jq("#tabs").tabs('exists', "任务管理")) {
+							  jq('#tabs').tabs('select', "任务管理");
+							}
+							typeof window.top.reload_taskTab === 'function'
+							    && window.top.reload_taskTab.call();
+							
+							//关闭当前页面
+							currTitle = currTab.panel('options').title;
+							jq('#tabs').tabs('close', currTitle);
+						} else {
+							resetValue();
+							$("#dlg").dialog("close");
+							$("#dg").datagrid("reload");
+						}
+					} else {
+						$.messager.alert("系统提示", result.errorInfo);
+					}
+	        	}
+            });
+		}
+	}
+
+	function openAddDialog() {
+		$("#dlg").dialog("open").dialog("setTitle", "添加样品管理信息");
+		url = "/sample/manager/save";
+	}
+
+	function openModifyDialog() {
+		var selectedRows = $("#dg").datagrid("getSelections");
+		if (selectedRows.length != 1) {
+			$.messager.alert("系统提示", "请选择一条要修改的数据！");
+			return;
+		}
+		var row = selectedRows[0];
+		$("#dlg").dialog("open").dialog("setTitle", "修改样品管理信息");
+		$("#fm").form("load", row);
+		url = "/sample/manager/save?id=" + row.id;
+	}
+
+	function deleteOneGrid() {
+		var selectedRows = $("#dg").datagrid("getSelections");
+		if (selectedRows.length == 0) {
+			$.messager.alert("系统提示", "请选择要删除的数据！");
+			return;
+		}
+		var strIds = [];
+		for (var i = 0; i < selectedRows.length; i++) {
+			strIds.push(selectedRows[i].id);
+		}
+		var ids = strIds.join(",");
+		$.messager.confirm("系统提示", "您确定要删除这条数据吗?", function(r) {
+			if (r) {
+				$.post("/sample/manager/delete", {
+					ids : ids
+				}, function(result) {
+					if (result.success) {
+						$.messager.alert("系统提示", "数据已成功删除！");
+						$("#dg").datagrid("reload");
+					} else {
+						$.messager.alert("系统提示", result.errorInfo);
+					}
+				}, "json");
+			}
+		});
+	}
+</script>
+</head>
+<body class="easyui-layout">
+
+	<div data-options="region:'north'" style="height: 135px;padding: 10px;border: 0px;padding-top: 20px">
+		<fieldset style="border-color: #E7F0FF">
+		<legend style="font-size:16px">查询区域</span></legend>
+			<form id="queryFrom" method="post">
+				<table cellspacing="8px" style="font-size:16px">
+					<tr>
+						<td>样品编号：</td>
+						<td>
+							<input type="text" id="sampleCode" name="sampleCode" class="easyui-textbox" style="width:100%;height:20px;"/>
+						</td>
+						<td></td>
+						<td></td>
+						<td>样品名称：</td>
+						<td>
+							<input type="text" id="sampleName" name="sampleName" class="easyui-textbox" style="width:100%;height:20px;"/>
+						</td>
+						<td></td>
+						<td></td>
+						<td>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<a href="javascript:searchQuery()" class="chaxun_class">查 询</a>
+							&nbsp;&nbsp;&nbsp;
+							<a href="javascript:clearQuery()"  class="qingkong_class">清 空</a>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</fieldset>
+	</div>
+	
+	<div data-options="region:'center'" style="padding: 10px;border: 1px">
+		<table id="dg" class="easyui-datagrid" style="height:1200px" pageSize="20" data-options="loadMsg:'正在努力加载数据...'"
+			fitColumns="true" pagination="true" rownumbers="true" url="/sample/manager/list" fit="true" toolbar="#tb">
+			<thead>
+				<th field="cb" checkbox="true" align="center"></th>
+				<th field="projectName" width="100" align="center">流程主题</th>
+				<th field="sampleName" width="100" align="center">样品名称</th>
+				<th field="shebeiName" width="100" align="center">设备名称</th>
+				<th field="hjShidu" width="100" align="center">环境湿度</th>
+				<th field="huFengxiang" width="100" align="center">环境风向</th>
+				<th field="personName" width="100" align="center">人员名称</th>
+				<th field="shiyanMethod" width="100" align="center">实验方法</th>
+				<th field="carType" width="100" align="center">车型</th>
+				<th field="carYear" width="100" align="center">年份</th>
+				<th field="displacement" width="100" align="center">排量</th>
+				<th field="innerCode" width="100" align="center">内部编号</th>
+				<th field="remark" width="100" align="center">备注</th>
+			</thead>
+		</table>
+		<div id="tb">
+			<div style="padding: 2px">
+				<a href="javascript:openAddDialog()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a>
+				<a href="javascript:openModifyDialog()" class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a>
+				<a href="javascript:deleteOneGrid()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 项目信息弹框 -->
+	<div id="dlg4" class="easyui-dialog" style="width: 400px;height: 200px;padding: 10px 10px" data-options="title:'选择任务名称',loadMsg:'正在努力加载数据...'" closed="true" >
+		<table id="dg4" class="easyui-datagrid" fitColumns="true" rownumbers="true" singleSelect="true"
+			url="/project/manager/comboList" fit="true">
+			<thead>
+				<th field="projectCode" width="100" align="center">委托单编号</th>
+				<th field="projectName" width="100" align="center">流程主题</th>
+			</thead>
+		</table>
+	</div>
+	
+	<div id="dlg" class="easyui-dialog" style="text-align:center; margin: 0px auto;" fit="true" 
+		closed="true" buttons="#dlg-buttons" data-options="onClose:function(){resetValue()}">
+		<form id="fm" method="post">
+			<table cellspacing="40px" style="margin:auto;text-align:center">
+				<tr>
+					<td>委托单编号：</td>
+					<td>
+						<input id="projectCode" name="projectCode" style="width: 220px;height:20px;" class="easyui-validatebox" required="true" readonly="readonly" onclick="openProjectCode(this)"/>
+					</td>
+					<td>流程主题：</td>
+					<td>
+						<input id="projectName" name="projectName" style="width: 220px;height:20px;" class="easyui-validatebox" required="true" readonly="readonly" />
+					</td>
+				</tr>
+				<tr>
+					<td>样品编号：</td>
+					<td>
+						<input type="text" name="sampleCode" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+					<td>样品名称：</td>
+					<td>
+						<input type="text" name="sampleName" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>设备编号：</td>
+					<td>
+						<input type="text" name="shebeiCode" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+					<td>设备名称：</td>
+					<td>
+						<input type="text" name="shebeiName" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>环境湿度：</td>
+					<td>
+						<input type="text" name="hjShidu" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+					<td>环境风向：</td>
+					<td>
+						<input type="text" name="huFengxiang" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>人员名称：</td>
+					<td>
+						<input type="text" name="personName" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+					<td>实验方法：</td>
+					<td>
+						<input type="text" name="shiyanMethod" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>车型：</td>
+					<td>
+						<input type="text" name="carType" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+					<td>年份：</td>
+					<td>
+						<input type="text" id="carYear" name="carYear" class="easyui-datebox" required="true" style="width: 220px;height:25px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>排量：</td>
+					<td>
+						<input type="text" name="displacement" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+					<td>内部编号：</td>
+					<td>
+						<input type="text" name="innerCode" class="easyui-validatebox" required="true" style="width: 220px;height:20px;"/>
+					</td>
+				</tr>
+				<tr>
+					<td>备注：</td>
+					<td colspan="3">
+						<input type="text" name="remark" class="easyui-validatebox" required="true" style="width: 620px;height:20px;"/>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<div id="dlg-buttons">
+		<a href="javascript:save()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+		<a href="javascript:closeDialog()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
+	</div>
+</body>
+</html>

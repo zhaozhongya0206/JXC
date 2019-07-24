@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="OFF">
+	<appenders>
+		<Console name="Console" target="SYSTEM_OUT">  
+	      <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY" />
+	      <PatternLayout pattern="%X{requestId} %d{HH:mm:ss.SSS}[%5p][%t](%c{1.}):%m%n"/>  
+	    </Console>
+		<RollingFile name="RollingFile" fileName="C:/JXC.log"
+			filePattern="C:/JXC.log.%d{yyyy-MM-dd}">
+			<ThresholdFilter level="info" onMatch="ACCEPT"
+				onMismatch="DENY" />
+			<PatternLayout
+				pattern="%X{requestId} %d{yyyy-MM-dd HH:mm:ss.SSS}[%5p][%t](%c{1.}):%m%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+			</Policies>
+		</RollingFile>
+	</appenders>
+	<loggers>
+		<root level="all" includeLocation="false">
+			<appender-ref ref="Console"/>
+			<appender-ref ref="RollingFile" />
+		</root>
+	</loggers>
+</configuration>
