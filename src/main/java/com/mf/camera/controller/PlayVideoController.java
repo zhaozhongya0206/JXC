@@ -19,7 +19,7 @@ import com.mf.entity.camera.PlayVideo;
 
 /**
  * @ClassName:PlayVideoController
- * @Description:上传视频controller哈哈哈哈哈哈哈哈哈哈或或
+ * @Description:上传视频
  * @author zzy
  * @date 2018年12月10日
  * @version V1.0
@@ -34,7 +34,7 @@ public class PlayVideoController {
 	private PlayVideoService playVideoService;
 	
 	/**
-	 * 下拉框模糊查询bbbbbbbbb
+	 * 下拉框模糊查询
 	 * @param q
 	 * @return
 	 * @throws Exception
