@@ -34,7 +34,7 @@ public class PlayVideoController {
 	private PlayVideoService playVideoService;
 	
 	/**
-	 * 下拉框模糊查询
+	 * 下拉框模糊查询bbbbbbbbb
 	 * @param q
 	 * @return
 	 * @throws Exception
