@@ -19,7 +19,7 @@ import com.mf.entity.camera.PlayVideo;
 
 /**
  * @ClassName:PlayVideoController
- * @Description:上传视频controller
+ * @Description:上传视频
  * @author zzy
  * @date 2018年12月10日
  * @version V1.0
