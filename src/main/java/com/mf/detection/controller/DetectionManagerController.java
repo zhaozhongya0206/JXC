@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mf.detection.service.DetectionManagerService;
 import com.mf.entity.Log;
 import com.mf.entity.detection.DetectionManager;
-import com.mf.entity.photo.PhotoManager;
 import com.mf.entity.project.ProjectManager;
 import com.mf.project.service.ProjectManagerService;
 import com.mf.service.LogService;
@@ -191,14 +190,16 @@ public class DetectionManagerController {
 	}
 
 	@RequestMapping("/capturePic")
-	public Map<String, Object> capturePic(PhotoManager photoManager) throws Exception {
-		log.info("capturePic photoManager: " + photoManager.toString());
+	public Map<String, Object> capturePic(@RequestParam(value="photoCode") String photoCode, @RequestParam(value="timeDisplay") String timeDisplay) throws Exception {
+		log.info("capturePic photoCode: " + photoCode + ",timeDisplay:"+timeDisplay);
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			Map<String, String> params = new HashMap<String, String>();
-			params.put("photo", photoManager.getPhotoCode());
-			params.put("path", photoManager.getPhotoCode());//文件名称，使用photo_code保证唯一性
-			//params.put("timer", DateUtil.currentDateIDString());
+			params.put("photo", photoCode);
+			params.put("path", photoCode);//文件名称，使用photo_code保证唯一性
+			if(StringUtil.isNotEmpty(timeDisplay)) {
+				params.put("playTime", timeDisplay);
+			}
 			String result = HttpClientUtil.sendGet("http://192.168.56.102:5000/photo/", params, 3000);
 			log.info("capturePic HttpClientUtil result: " + result);
 			if(StringUtil.isNotEmpty(result)) {
@@ -207,7 +208,8 @@ public class DetectionManagerController {
 				resultMap.put("errorInfo", "获取图像失败，请稍后重试！");
 				resultMap.put("success", false);
 			}
-        } catch (Exception e) {
+			resultMap.put("success", true);
+        } catch (Throwable e) {
 			log.error(e.getMessage(), e);
 			resultMap.put("errorInfo", "获取图像失败，请稍后重试！");
 			resultMap.put("success", false);

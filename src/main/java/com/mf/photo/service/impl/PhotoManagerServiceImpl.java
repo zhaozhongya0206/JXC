@@ -137,8 +137,8 @@ public class PhotoManagerServiceImpl implements PhotoManagerService {
 	public String MP4(CommonsMultipartFile multipartRequest, String filename) throws Exception {
 		// MP4文件格式直接上传保存路径
 		String webappRoot = this.getClass().getResource("/").getPath().replaceFirst("/", "").replaceAll("WEB-INF/classes", "");
-		String path = "src/main/webapp/index/video/";
-		//String path = webappRoot + Contants.PLAY_VIDEO_PATH;
+		//String path = "src/main/webapp/index/video/";
+		String path = webappRoot + Contants.PLAY_VIDEO_PATH;
 		File TempFile = new File(path);
 		if (!TempFile.exists()) {
 			log.info("文件夹不存在，创建该文件夹。");
@@ -180,8 +180,8 @@ public class PhotoManagerServiceImpl implements PhotoManagerService {
 	public void deleteFile(PhotoManager photoManager) throws Exception {
 		// 删除上传文件
 		String webappRoot = this.getClass().getResource("/").getPath().replaceFirst("/", "").replaceAll("WEB-INF/classes", "");
-		//String path = webappRoot + Contants.PLAY_VIDEO_PATH;
-		String path = "src/main/webapp/index/video/";
+		String path = webappRoot + Contants.PLAY_VIDEO_PATH;
+		//String path = "src/main/webapp/index/video/";
 		File file = new File(path+photoManager.getFile());
 		if (!file.isFile()) {
 			throw new Exception("没有该视频文件: " + (path+photoManager.getFile()));

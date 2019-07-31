@@ -103,6 +103,23 @@ public class DateUtil {
 	}
 	
 	/**
+	 * 计算两个日期相减，返回秒
+	 * @param beginDate
+	 * @param endDate
+	 * @return
+	 * @throws Exception
+	 */
+	public static String beginEndTime(Date beginDate, Date endDate) throws Exception {
+		//计算时间差
+        long diff = endDate.getTime() - beginDate.getTime();
+        //计算秒
+        long seconds = (diff % (1000 * 60)) / 1000;
+        //输出
+        System.out.println("日期时间秒差："+seconds+"秒");
+        return String.valueOf(seconds);
+	}
+	
+	/**
 	 * 获取指定范围内的月份集合
 	 * @param begin
 	 * @param end

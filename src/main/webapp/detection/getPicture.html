@@ -76,6 +76,9 @@
 	var photoPort = null;
 	var photoLogoName = null;
 	var photoLogoPassword = null;
+	var playVideoFlag = false;
+	var timeDisplay = null;
+	
 	$(function() {
 		debugger;
 		//使用正则表达式截取url地址参数
@@ -109,6 +112,16 @@
 							// 自动播放
 							document.getElementById("videoid").src="../index/video/"+photoManager.file;
 							document.getElementById("videoid").play();
+							playVideoFlag = true;
+							
+							//监听播放时间
+							var videoid = document.getElementById('videoid');
+							//使用事件监听方式捕捉事件
+							videoid.addEventListener("timeupdate", function(){
+								//用秒数来显示当前播放进度
+								timeDisplay = Math.floor(videoid.currentTime);
+								console.log(Math.floor(videoid.currentTime));
+							}, false);
 						} else {
 							//加载视频展示
 							photoIp = photoManager.photoIp;
@@ -230,23 +243,18 @@
 	//获取图像，暂停并截图
 	function getButtoClass() {
 		debugger;
-		if(photoIp && photoPort && photoLogoName && photoLogoPassword) {
-			//var i_Pause = WebVideoCtrl.I_Pause();
-			//var i_Stop = WebVideoCtrl.I_Stop();
-			clickCapturePic();
-			/*  else {
-				WebVideoCtrl.I_Resume();
-			} */
-		} else {
-			//$.messager.alert("系统提示", "系统异常，请稍后重试！");
-		}
+		clickCapturePic();
 	};
 	// 抓图
 	function clickCapturePic() {
 		debugger;
 		if(photoCode) {
+			//为视频流播放
+			if(playVideoFlag) {
+				$("#videoid").trigger("pause");//暂停
+			}
 			$.ajax({
-				data : {"photoCode" : photoCode},
+				data : {"photoCode" : photoCode, "timeDisplay" : timeDisplay},
 				url : "/detection/manager/capturePic",
 				dataType : "json",
 				type : 'POST',
@@ -259,6 +267,10 @@
 							currTitle = currTab.panel('options').title;
 							jq('#tabs').tabs('close', currTitle);
 							return false;
+						} else {
+							if(playVideoFlag) {
+								$("#videoid").trigger("play");//继续播放
+							}
 						}
 					} else {
 						$.messager.alert("系统提示", result.errorInfo);
