@@ -200,7 +200,7 @@ public class DetectionManagerController {
 			if(StringUtil.isNotEmpty(timeDisplay)) {
 				params.put("playTime", timeDisplay);
 			}
-			String result = HttpClientUtil.sendGet("http://192.168.56.102:5000/photo/", params, 3000);
+			String result = HttpClientUtil.sendGet("http://192.168.56.103:5000/photo/", params, 3000);
 			log.info("capturePic HttpClientUtil result: " + result);
 			if(StringUtil.isNotEmpty(result)) {
 				resultMap.put("success", true);

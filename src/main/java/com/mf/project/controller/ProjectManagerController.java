@@ -1,5 +1,6 @@
 package com.mf.project.controller;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -112,7 +113,7 @@ public class ProjectManagerController {
 			logService.save(new Log(Log.UPDATE_ACTION,"更新项目设置信息"+projectManager));
 		} else {
 			//根据项目编码查询是否已存在数据
-			/*ProjectManager dto = new ProjectManager();
+			ProjectManager dto = new ProjectManager();
 			dto.setProjectCode(projectManager.getProjectCode());
 			Long count = projectManagerService.getCount(dto);
 			log.info("projectManagerService getCount: " + count);
@@ -121,7 +122,7 @@ public class ProjectManagerController {
 				return resultMap;
 			}
 			//判断样品信息是否存在
-			SampleManager sampleManager = sampleManagerService.findSampleBySampleCode(projectManager.getSampleCode());
+			/*SampleManager sampleManager = sampleManagerService.findSampleBySampleCode(projectManager.getSampleCode());
 			if(sampleManager != null) {
 				resultMap.put("errorInfo", "该样品已存在！");
 				resultMap.put("success", false);
@@ -199,6 +200,14 @@ public class ProjectManagerController {
 		projectManagerService.updateFlag(projectManager.getId(), projectManager.getProjectFlag());
 		if(projectManager.getProjectFlag() == 3) {
 			projectManagerService.updatePhotoStatus(dto.getPhotoCode(), "0");
+			//删除对应的相机截图图片
+			String webappRoot = this.getClass().getResource("/").getPath().replaceFirst("/", "").replaceAll("WEB-INF/classes", "");
+			String fileName = webappRoot+"/detection/"+dto.getPhotoCode()+".png";
+			File file = new File(fileName);
+			// 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
+			if (file.exists() && file.isFile()) {
+				file.delete();
+			}
 		}
 		resultMap.put("success", true);
 		return resultMap;

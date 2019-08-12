@@ -608,36 +608,34 @@
 		var id = $("#projectId"+_index).val();
 		var photoCode = $("#photoCode"+_index).val();
 		if (id) {
-			$.messager.confirm("系统提示", "该条目一旦被结束后无法再被激活？", function(r) {
-				if (r) {
-					debugger;
-					$.ajax({
-						data : {
-							id : id,
-							projectFlag : 3
-						},
-						url : "/project/manager/updateFlag",
-						dataType : "json",
-						type : 'POST',
-						success : function(result) {
-							if (result.success) {
-								//window.location.reload();
-								debugger;
-								var projectFlagName = "结束";
-								$("#img_"+_index+"_kaishi").attr('src', "../img/kaishi_disable.png");
-								$("#img_"+_index+"_zanting").attr('src', "../img/zanting_disable.png");
-								$("#img_"+_index+"_jieshu").attr('src', "../img/jieshu_disable.png");
-								$("#img_"+_index+"_shezhi").attr('src', "../img/shezhi_disable.png");
-								$("#projectStatus"+_index).html(projectFlagName);
-								playVideoSelect(_index);
-								messagerShow();
-							} else {
-								$.messager.alert("系统提示", result.errorInfo);
-							}
+			if(confirm("该条目一旦被结束后无法再被激活？") == true) {
+				debugger;
+				$.ajax({
+					data : {
+						id : id,
+						projectFlag : 3
+					},
+					url : "/project/manager/updateFlag",
+					dataType : "json",
+					type : 'POST',
+					success : function(result) {
+						if (result.success) {
+							//window.location.reload();
+							debugger;
+							var projectFlagName = "结束";
+							$("#img_"+_index+"_kaishi").attr('src', "../img/kaishi_disable.png");
+							$("#img_"+_index+"_zanting").attr('src', "../img/zanting_disable.png");
+							$("#img_"+_index+"_jieshu").attr('src', "../img/jieshu_disable.png");
+							$("#img_"+_index+"_shezhi").attr('src', "../img/shezhi_disable.png");
+							$("#projectStatus"+_index).html(projectFlagName);
+							playVideoSelect(_index);
+							messagerShow();
+						} else {
+							$.messager.alert("系统提示", result.errorInfo);
 						}
-					});
-				}
-			});
+					}
+				});
+			}
 		} else {
 			$.messager.alert("系统提示", "系统异常，请稍后重试！");
 			return false;

@@ -313,7 +313,11 @@
 														}
 													});
 												} else {
-													$.messager.alert("系统提示", "保存失败！");
+													if(result.errorInfo) {
+														$.messager.alert("系统提示", result.errorInfo);
+													} else {
+														$.messager.alert("系统提示", "保存失败！");
+													}
 												}
 								        	}
 							            });
