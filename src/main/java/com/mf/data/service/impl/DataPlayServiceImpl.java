@@ -187,11 +187,17 @@ public class DataPlayServiceImpl implements DataPlayService {
 	@Override
 	public void delete(Integer id) {
 		ExceptionManager dto = dataPlayRepository.findOne(id);
+		//删除对应的图片文件
 		String path = dto.getFolderPicturePath()+"\\"+dto.getPicturePath();
 		File file = new File(path);
-		// 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
 		if (file.isFile()) {
 			file.delete();
+		}
+		//删除对应生成的视频文件
+		String videoPath = dto.getFolderVideoPath()+"\\"+dto.getVideoPath();
+		File videoFile = new File(videoPath);
+		if (videoFile.isFile()) {
+			videoFile.delete();
 		}
 		dataPlayRepository.delete(id);
 	}
