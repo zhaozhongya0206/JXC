@@ -3,17 +3,19 @@ package com.mf.data.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.mf.data.service.DataPlayService;
 import com.mf.entity.data.ExceptionManager;
-import com.mf.util.Contants;
 
 @RestController
 @RequestMapping("/data/play")
@@ -30,9 +32,9 @@ public class DataPlayController {
 		log.info("list exceptionManager: " + exceptionManager.toString());
 		Map<String,Object> resultMap = new HashMap<>();
 		List<ExceptionManager> customerList = dataPlayService.list(exceptionManager, page, rows, Direction.ASC, "id");
-		String path = request.getSession().getServletContext().getRealPath("/");
+		/*String path = request.getSession().getServletContext().getRealPath("/");
 		log.info("path: " + path);
-		/*for(ExceptionManager exceptionDto : customerList) {
+		for(ExceptionManager exceptionDto : customerList) {
 			dataPlayService.getFiles(exceptionDto.getFolderVideoPath(), path + Contants.EXCEPTION_OUT_VIDEO_PATH);
 			dataPlayService.getFiles(exceptionDto.getFolderPicturePath(), path + Contants.EXCEPTION_OUT_IMG_PATH);
 		}*/

@@ -13,7 +13,7 @@
 <body class="easyui-layout">
 	<div data-options="region:'north'" style="height: 170px;padding: 10px;border: 0px;padding-top: 20px">
 		<fieldset style="border-color: #E7F0FF">
-		<legend style="font-size:16px">查询区域</span></legend>
+		<legend style="font-size:16px">查询区域</legend>
 			<form id="queryFrom" method="post">
 				<input type="text" id="projectId" name="projectId" style="display: none" />
 				<table cellspacing="8px" style="font-size:16px">
@@ -230,7 +230,7 @@
 	            type: "POST", //提交数据的类型 分为POST和GET  
 	            async: false,
 	            url: "/data/play/list",  //提交url 注意url必须小写 
-	            data: {"page": 1, "rows": 100, "projectCode" : projectCode, "projectName" : projectName, "sampleCode" : sampleCode, "sampleName" : sampleName},  
+	            data: {"page": 1, "rows": 20, "projectCode" : projectCode, "projectName" : projectName, "sampleCode" : sampleCode, "sampleName" : sampleName},  
 	            success: function (data) {
 	                $('#dg').datagrid('loadData', data);
 	            }
@@ -260,56 +260,20 @@
 		           //debugger;
 		      	},
 		       	onRefresh:function(pageNumber,pageSize){
-		           	$.ajax({
-			            type: "POST", //提交数据的类型 分为POST和GET  
-			            async: false,
-			            url: "/data/play/list",  //提交url 注意url必须小写 
-			            data: {"page": pageNumber, "rows": pageSize, 
-			            	"createTimeStart" : $('#createTimeStart').datebox('getValue'),
-			            	"createTimeEnd" : $('#createTimeEnd').datebox('getValue'),
-			            	"detectionName" : $("#detectionName").val(),
-			            	"projectName" : $("#projectName").val(),
-			            	"sampleName" : $("#sampleName").val(),
-			            	"photoName" : $("#photoName").val()
-			            }, success: function (data) {
-			            	debugger;
-			                $('#dg').datagrid('loadData', data);
-			            }
-				    });
+		       		debugger;
+		       		searchQuery();
 		        },
 		       	onChangePageSize:function(){
 		           //alert('pagesize changed');
 		        },
 				onSelectPage:function(pageNumber,pageSize){
-		           $.ajax({
-			            type: "POST", //提交数据的类型 分为POST和GET  
-			            async: false,
-			            url: "/data/play/list",  //提交url 注意url必须小写 
-			            data: {"page": pageNumber, "rows": pageSize, 
-			            	"createTimeStart" : $('#createTimeStart').datebox('getValue'),
-			            	"createTimeEnd" : $('#createTimeEnd').datebox('getValue'),
-			            	"detectionName" : $("#detectionName").val(),
-			            	"projectName" : $("#projectName").val(),
-			            	"sampleName" : $("#sampleName").val(),
-			            	"photoName" : $("#photoName").val()
-			            }, success: function (data) {
-			            	debugger;
-			                $('#dg').datagrid('loadData', data);
-			            }
-				    });
+					debugger;
+					searchQuery();
 				}
 		   });
-			if(!projectId) {
-				 $.ajax({
-		            type: "POST", //提交数据的类型 分为POST和GET  
-		            async: false,
-		            url: "/data/play/list",  //提交url 注意url必须小写 
-		            data: {"page": 1, "rows": 100},  
-		            success: function (data) {
-		                $('#dg').datagrid('loadData', data);
-		            }
-				});
-			}
+		   if(!projectId) {
+				searchQuery();
+		   }
 		});
 		/************相机弹出框信息 start**************/
 		function openPhotoCode($this){
@@ -356,9 +320,13 @@
 			var projectName = $("#projectName").val();
 			var sampleName = $("#sampleName").val();
 			var photoName = $("#photoName").val();
-	        var options = $('#dg').datagrid('getPager').data("pagination").options;
-	        var curr = options.pageNumber;
-	        var pageSize = options.pageSize;
+			var options = $('#dg').datagrid('getPager').data("pagination").options;
+		    var curr = options.pageNumber;
+		    var pageSize = options.pageSize;
+	        if(ifmProjectName && ifmSampleName) {
+	        	projectName = ifmProjectName;
+	        	sampleName = ifmSampleName;
+			}
 	        $.ajax({
 	            type: "POST", //提交数据的类型 分为POST和GET  
 	            async: false,
@@ -367,18 +335,16 @@
 	            	"createTimeStart" : createTimeStart,
 	            	"createTimeEnd" : createTimeEnd,
 	            	"detectionName" : detectionName,
+	            	"photoName" : photoName,
 	            	"projectName" : projectName,
 	            	"sampleName" : sampleName,
-	            	"photoName" : photoName
+	            	"projectCode" : ifmProjectCode,
+	            	"sampleCode" : ifmSampleCode
 	            }, success: function (data) {
 	            	debugger;
 	                $('#dg').datagrid('loadData', data);
 	            }
 		    });
-	        var ifmProjectCode = null;
-			var ifmProjectName = null;
-			var ifmSampleCode = null;
-			var ifmSampleName = null;
 		};
 		//清空form表单查询条件
 		function clearQuery() {
@@ -394,46 +360,40 @@
 			var arrStrs = new Array(arrs.length-1);
 			$.each(arrs, function(index, value2){
 				if(value2) {
-					arrStrs[index] = "<a href='#' class='easyui-tooltip' onclick='playVideo("+row.id+",\""+value2+"\""+");' title=" + "\"点击播放\"" + ">" + value2 + "</a>";	
+					arrStrs[index] = "<a href='#' class='easyui-tooltip' onclick='playVideo("+row.id+",\""+value2+"\""+",\""+row.projectCode+"\""+",\""+row.flag+"\""+");' title=" + "\"点击播放\"" + ">" + value2 + "</a>";	
 				}
 			});
 			return arrStrs.toString();
 		};
 		//调用播放器
-		function playVideo(id, value) {
+		function playVideo(id, value, projectCode, flag) {
 			debugger;
 			if(value && id) {
 				//修改标识为已读
-				$.ajax({
-					url : "/data/play/updateFlag",
-					traditional : true,
-					dataType : "json",
-					type : 'POST',
-					data : {"id" : id},
-					success : function(resultData) {
-						debugger;
-						if (resultData.success) {
-							if(ifmProjectCode && ifmProjectName && ifmSampleCode && ifmSampleName) {
-								rowStyler(ifmProjectCode, ifmProjectName, ifmSampleCode, ifmSampleName);	
+				if(flag!="1") {
+					$.ajax({
+						url : "/data/play/updateFlag",
+						traditional : true,
+						dataType : "json",
+						type : 'POST',
+						data : {"id" : id},
+						success : function(resultData) {
+							debugger;
+							if (resultData.success) {
+								if(ifmProjectCode && ifmProjectName && ifmSampleCode && ifmSampleName) {
+									rowStyler(ifmProjectCode, ifmProjectName, ifmSampleCode, ifmSampleName);	
+								} else {
+									searchQuery();
+								}
 							} else {
-								 $.ajax({
-						            type: "POST", //提交数据的类型 分为POST和GET  
-						            async: false,
-						            url: "/data/play/list",  //提交url 注意url必须小写 
-						            data: {"page": 1, "rows": 100},
-						            success: function (data) {
-						                $('#dg').datagrid('loadData', data);
-						            }
-								});
+								$.messager.alert("系统提示", "系统异常，请稍后再试！");
 							}
-						} else {
-							$.messager.alert("系统提示", "系统异常，请稍后再试！");
 						}
-					}
-				});
+					});
+				}
 				debugger;
 				$('#iframeOperationPlay').attr('src', "/data/playingVideo.html");
-				$("#videoSrc").attr("value", "exception/video/" + value);
+				$("#videoSrc").attr("value", "exception/video/"+projectCode+"/"+value);
 				$("#dlg-operationPlay").dialog("open").dialog("setTitle", "播放视频页面");
 			} else {
 				$.messager.alert('温馨提示', "播放视频错误！", 'error');
@@ -450,44 +410,39 @@
 			var arrStrs = new Array(arrs.length-1);
 			$.each(arrs, function(index, value2){
 				if(value2) {
-					arrStrs[index] = "<a href='#' class='easyui-tooltip' onclick='playImg("+row.id+",\""+value2+"\""+");' title="+"\"点击播放\""+">" + value2 + "</a>";	
+					arrStrs[index] = "<a href='#' class='easyui-tooltip' onclick='playImg("+row.id+",\""+value2+"\""+",\""+row.projectCode+"\""+",\""+row.flag+"\""+");' title="+"\"点击播放\""+">" + value2 + "</a>";	
 				}
 			});
 			return arrStrs.toString();
 		};
-		function playImg(id, value) {
+		function playImg(id, value, projectCode, flag) {
 			debugger;
 			if(value && id) {
 				//修改标识为已读
-				$.ajax({
-					url : "/data/play/updateFlag",
-					traditional : true,
-					dataType : "json",
-					type : 'POST',
-					data : {"id" : id},
-					success : function(resultData) {
-						debugger;
-						if (resultData.success) {
-							if(ifmProjectCode && ifmProjectName && ifmSampleCode && ifmSampleName) {
-								rowStyler(ifmProjectCode, ifmProjectName, ifmSampleCode, ifmSampleName);	
+				if(flag!="1") {
+					$.ajax({
+						url : "/data/play/updateFlag",
+						traditional : true,
+						dataType : "json",
+						type : 'POST',
+						data : {"id" : id},
+						success : function(resultData) {
+							debugger;
+							if (resultData.success) {
+								if(ifmProjectCode && ifmProjectName && ifmSampleCode && ifmSampleName) {
+									rowStyler(ifmProjectCode, ifmProjectName, ifmSampleCode, ifmSampleName);	
+								} else {
+									searchQuery();
+								}
 							} else {
-								$.ajax({
-						            type: "POST", //提交数据的类型 分为POST和GET  
-						            async: false,
-						            url: "/data/play/list",  //提交url 注意url必须小写 
-						            data: {"page": 1, "rows": 100},
-						            success: function (data) {
-						                $('#dg').datagrid('loadData', data);
-						            }
-								});
+								$.messager.alert("系统提示", "系统异常，请稍后再试！");
 							}
-						} else {
-							$.messager.alert("系统提示", "系统异常，请稍后再试！");
 						}
-					}
-				});
+					});
+				}
+				debugger;
 				$('#iframeOperationPlay').attr('src', "/data/playingImg.html");
-				$("#imgSrc").attr("value", "exception/img/" + value);
+				$("#imgSrc").attr("value", "exception/img/"+projectCode+"/"+value);
 				$("#dlg-operationPlay").dialog("open").dialog("setTitle", "异常图片");
 			} else {
 				$.messager.alert('温馨提示', "播放图片错误！", 'error');

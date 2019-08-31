@@ -89,10 +89,16 @@ public class ProjectManagerController {
 		log.info("save ProjectManager: " + projectManager.toString());
 		Map<String,Object> resultMap = new HashMap<>();
 		resultMap.put("success", false);
-		if(StringUtil.isEmpty(projectManager.getProjectCode())) {
+		if(StringUtil.isEmpty(projectManager.getProjectCode().trim())) {
 			resultMap.put("errorInfo", "传入委托单为空，请重新重新输入！");
 			return resultMap;
 		}
+		projectManager.setProjectCode(projectManager.getProjectCode().trim());
+		if(StringUtil.isEmpty(projectManager.getProjectName().trim())) {
+			resultMap.put("errorInfo", "传入委托单名称为空，请重新重新输入！");
+			return resultMap;
+		}
+		projectManager.setProjectName(projectManager.getProjectName().trim());
 		if(StringUtil.isEmpty(projectManager.getPhotoCode())) {
 			resultMap.put("errorInfo", "传入相机编号为空，请重新重新输入！");
 			return resultMap;
