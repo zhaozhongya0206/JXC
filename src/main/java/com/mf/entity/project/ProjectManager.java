@@ -23,7 +23,7 @@ public class ProjectManager {
     private String photoName;//视频源相机名称
     private String codeType;//相机类型
     private String videoSource;//视频源
-    private String videoSet;//录像设置(1不录像 2 全天录像)
+    private String videoSet;//录像设置(1不录像 2 全程录像)
     private String videoTime;//录像间隔
     private String exceptionEventTime;//录像时长（秒）
     private String projectUrl;//项目地址

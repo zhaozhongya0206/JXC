@@ -81,7 +81,7 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
         	if("1".equals(videoSet)) {
         		pm.setVideoSetName("不录像");
         	} else {
-        		pm.setVideoSetName("全天录像");
+        		pm.setVideoSetName("全程录像");
         	}
         	pm.setVideoTime((String)obj[6]);
         	pm.setExceptionEventTime((String)obj[7]);
