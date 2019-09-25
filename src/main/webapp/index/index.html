@@ -35,7 +35,7 @@
 	  width:28px;
 	}
 	.disable_a {
-		cursor:default;
+		cursor:pointer;
 		pointer-events:none;
 	}
 </style>
@@ -73,11 +73,11 @@
 		      	  	 </div>
 				  </div>
 				  <div class="bun">
-				  	<a href='javascript:void(0)' id="a_0_kaishi" class="disable_a" title='开  始' onclick='startProject(0);'><img id="img_0_kaishi" src='../img/kaishi_disable.png' class='img_class'/></a>
-				  	<a href='javascript:void(0)' id="a_0_zanting" class="disable_a" title='暂  停' onclick='stopProject(0);'><img id="img_0_zanting" src='../img/zanting_disable.png' class='img_class'/></a>
-					<a href='javascript:void(0)' id="a_0_jieshu" class="disable_a" title='结  束' onclick='discontinueProject(0);'><img id="img_0_jieshu" src='../img/jieshu_disable.png' class='img_class'/></a>
-					<a href='javascript:void(0)' id="a_0_shezhi" class="disable_a" title='设  置' onclick='setUpProject(0);'><img id="img_0_shezhi" src='../img/shezhi_disable.png' class='img_class'/></a>
-				  </div>
+				  	<a href='javascript:void(0)' id="a_0_kaishi" title='开  始'  class="disable_a" onclick='startProject(0);'><img id="img_0_kaishi" src='../img/kaishi_disable.png' class='img_class'/></a>
+				  	<a href='javascript:void(0)' id="a_0_zanting" title='暂  停'  class="disable_a" onclick='stopProject(0);'><img id="img_0_zanting" src='../img/zanting_disable.png' class='img_class'/></a>
+					<a href='javascript:void(0)' id="a_0_jieshu" title='结  束'  class="disable_a" onclick='discontinueProject(0);'><img id="img_0_jieshu" src='../img/jieshu_disable.png' class='img_class'/></a>
+					<a href='javascript:void(0)' id="a_0_shezhi" title='设  置'  class="disable_a" onclick='setUpProject(0);'><img id="img_0_shezhi" src='../img/shezhi_disable.png' class='img_class'/></a>
+				 </div>
 			</div>
 			<!-- 相机2 -->
 			<div id="_div1" class="father" style="cursor: pointer;" onclick="playVideo(this)">
@@ -104,7 +104,7 @@
 		      		</div>
 			  	</div>
 				<div class="bun">
-				  	<a href='javascript:void(0)'  id="a_1_kaishi" title='开  始' class="disable_a" onclick='startProject(1);'><img id="img_1_kaishi" src='../img/kaishi_disable.png' class='img_class'/></a>
+				  	<a href='javascript:void(0)'  id="a_1_kaishi" title='开  始'  class="disable_a" onclick='startProject(1);'><img id="img_1_kaishi" src='../img/kaishi_disable.png' class='img_class'/></a>
 				  	<a href='javascript:void(0)'  id="a_1_zanting" title='暂  停' class="disable_a" onclick='stopProject(1);'><img id="img_1_zanting" src='../img/zanting_disable.png' class='img_class'/></a>
 					<a href='javascript:void(0)'  id="a_1_jieshu" title='结  束' class="disable_a" onclick='discontinueProject(1);'><img id="img_1_jieshu" src='../img/jieshu_disable.png' class='img_class'/></a>
 					<a href='javascript:void(0)'  id="a_1_shezhi" title='设  置' class="disable_a" onclick='setUpProject(1);'><img id="img_1_shezhi" src='../img/shezhi_disable.png' class='img_class'/></a>
@@ -137,7 +137,7 @@
 	        	<div class="bun">
 				  	<a href='javascript:void(0)'  id="a_2_kaishi" title='开  始' class="disable_a" onclick='startProject(2);'><img id="img_2_kaishi" src='../img/kaishi_disable.png' class='img_class'/></a>
 				  	<a href='javascript:void(0)'  id="a_2_zanting" title='暂  停' class="disable_a" onclick='stopProject(2);'><img id="img_2_zanting" src='../img/zanting_disable.png' class='img_class'/></a>
-					<a href='javascript:void(0)'  id="a_2_jieshu" title='结  束' class="disable_a" onclick='discontinueProject(2);'><img id="img_2_jieshu" src='../img/jieshu_disable.png' class='img_class'/></a>
+					<a href='javascript:void(0)'  id="a_2_jieshu" title='结  束'  class="disable_a" onclick='discontinueProject(2);'><img id="img_2_jieshu" src='../img/jieshu_disable.png' class='img_class'/></a>
 					<a href='javascript:void(0)'  id="a_2_shezhi" title='设  置' class="disable_a" onclick='setUpProject(2);'><img id="img_2_shezhi" src='../img/shezhi_disable.png' class='img_class'/></a>
 			    </div>
 	        </div>
@@ -233,6 +233,9 @@
 								$("#img_"+i+"_zanting").attr('src', "../img/zanting_disable.png");
 								$("#img_"+i+"_jieshu").attr('src', "../img/jieshu_disable.png");
 								$("#img_"+i+"_shezhi").attr('src', "../img/shezhi.png");
+								
+								$("#a_"+i+"_zanting").addClass("disable_a");
+								$("#a_"+i+"_jieshu").addClass("disable_a");
 								$("#a_"+i+"_kaishi").removeClass("disable_a");
 								$("#a_"+i+"_shezhi").removeClass("disable_a");
 							}
@@ -244,6 +247,9 @@
 								$("#img_"+i+"_zanting").attr('src', "../img/zanting.png");
 								$("#img_"+i+"_jieshu").attr('src', "../img/jieshu.png");
 								$("#img_"+i+"_shezhi").attr('src', "../img/shezhi_disable.png");
+								
+								$("#a_"+i+"_kaishi").addClass("disable_a");
+								$("#a_"+i+"_shezhi").addClass("disable_a");
 								$("#a_"+i+"_zanting").removeClass("disable_a");
 								$("#a_"+i+"_jieshu").removeClass("disable_a");
 							}
@@ -255,8 +261,10 @@
 								$("#img_"+i+"_zanting").attr('src', "../img/zanting_disable.png");
 								$("#img_"+i+"_jieshu").attr('src', "../img/jieshu.png");
 								$("#img_"+i+"_shezhi").attr('src', "../img/shezhi.png");
-								$("#a_"+i+"_kaishi").removeClass("disable_a");
+								
+								$("#a_"+i+"_zanting").addClass("disable_a");
 								$("#a_"+i+"_jieshu").removeClass("disable_a");
+								$("#a_"+i+"_kaishi").removeClass("disable_a");
 								$("#a_"+i+"_shezhi").removeClass("disable_a");
 							}
 							//3 结束 浅灰色
@@ -267,6 +275,10 @@
 								$("#img_"+i+"_zanting").attr('src', "../img/zanting_disable.png");
 								$("#img_"+i+"_jieshu").attr('src', "../img/jieshu_disable.png");
 								$("#img_"+i+"_shezhi").attr('src', "../img/shezhi_disable.png");
+								$("#a_"+i+"_kaishi").css({"cursor":"pointer","pointer-events":"none"});
+								$("#a_"+i+"_zanting").css({"cursor":"pointer","pointer-events":"none"});
+								$("#a_"+i+"_jieshu").css({"cursor":"pointer","pointer-events":"none"});
+								$("#a_"+i+"_shezhi").css({"cursor":"pointer","pointer-events":"none"});
 							}
 							if(photoName !=null && projectName !=null && projectFlagName !=null) {
 								$("#xiangji"+i).html(photoName);
@@ -543,15 +555,18 @@
 				success : function(result) {
 					debugger;
 					if (result.success) {
-						//window.location.reload();
 						debugger;
 						var projectFlagName = "进行中";
 						$("#img_"+_index+"_kaishi").attr('src', "../img/kaishi_disable.png");
 						$("#img_"+_index+"_zanting").attr('src', "../img/zanting.png");
 						$("#img_"+_index+"_jieshu").attr('src', "../img/jieshu.png");
 						$("#img_"+_index+"_shezhi").attr('src', "../img/shezhi_disable.png");
+						
+						$("#a_"+_index+"_kaishi").addClass("disable_a");
+						$("#a_"+_index+"_shezhi").addClass("disable_a");
 						$("#a_"+_index+"_zanting").removeClass("disable_a");
 						$("#a_"+_index+"_jieshu").removeClass("disable_a");
+						
 						$("#projectStatus"+_index).html(projectFlagName);
 						playVideoSelect(_index);
 						messagerShow();
@@ -586,9 +601,12 @@
 						$("#img_"+_index+"_zanting").attr('src', "../img/zanting_disable.png");
 						$("#img_"+_index+"_jieshu").attr('src', "../img/jieshu.png");
 						$("#img_"+_index+"_shezhi").attr('src', "../img/shezhi.png");
-						$("#a_"+_index+"_kaishi").removeClass("disable_a");
+						
+						$("#a_"+_index+"_zanting").addClass("disable_a");
 						$("#a_"+_index+"_jieshu").removeClass("disable_a");
+						$("#a_"+_index+"_kaishi").removeClass("disable_a");
 						$("#a_"+_index+"_shezhi").removeClass("disable_a");
+						
 						$("#projectStatus"+_index).html(projectFlagName);
 						playVideoSelect(_index);
 						messagerShow();
@@ -627,6 +645,11 @@
 							$("#img_"+_index+"_zanting").attr('src', "../img/zanting_disable.png");
 							$("#img_"+_index+"_jieshu").attr('src', "../img/jieshu_disable.png");
 							$("#img_"+_index+"_shezhi").attr('src', "../img/shezhi_disable.png");
+							
+							$("#a_"+_index+"_kaishi").addClass("disable_a");
+							$("#a_"+_index+"_zanting").addClass("disable_a");
+							$("#a_"+_index+"_jieshu").addClass("disable_a");
+							$("#a_"+_index+"_shezhi").addClass("disable_a");
 							$("#projectStatus"+_index).html(projectFlagName);
 							playVideoSelect(_index);
 							messagerShow();
