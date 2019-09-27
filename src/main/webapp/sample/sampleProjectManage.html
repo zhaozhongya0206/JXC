@@ -269,73 +269,54 @@
 	};
 	/*************弹框信息 end ******************/
 	function save() {
+		debugger;
 		if($("#fm1").form("validate") && $("#fm2").form("validate")) {
-			debugger;
+			$("#sampleCode2").val($("#sampleCode").val());
+			$("#sampleName2").val($("#sampleName").val());
+			$("#projectCode2").val($("#projectCode").val());
+			$("#projectName2").val($("#projectName").val());
+			$("#projectId").val($("#id").val());
 			$.ajax({
-                url : "/photo/manager/findByPhotoCode",
-                type : 'post',
-                dataType : 'json',
-                data : {"photoCode" : $("#photoCode2").val()},
-                success : function(result) {
-                	//回调函数 
-					if (result.success && result.photoManager) {
+	               url : "/sample/manager/save",
+	               type : 'post',
+	               dataType : 'json',
+	               data : $("#fm2").serialize(),
+	               success : function(result) {
+	                   //回调函数
+					if (result.success && result.id) {
 						debugger;
-						//判断使用的相机是否闲置
-						if(result.photoManager.photoStatus == 0) {
-							$("#sampleCode2").val($("#sampleCode").val());
-							$("#sampleName2").val($("#sampleName").val());
-							$("#projectCode2").val($("#projectCode").val());
-							$("#projectName2").val($("#projectName").val());
-							$("#projectId").val($("#id").val());
-							$.ajax({
-				                url : "/sample/manager/save",
-				                type : 'post',
-				                dataType : 'json',
-				                data : $("#fm2").serialize(),
-				                success : function(result) {
-				                    //回调函数
-									if (result.success && result.id) {
-										debugger;
-										$("#sampleId").val(result.id);
-										$.ajax({
-							                url : "/project/manager/save",
-							                type : 'post',
-							                dataType : 'json',
-							                data : $("#fm1").serialize(),
-							                success:function(result) {
-							                    //回调函数 
-												if (result.success) {
-													debugger;
-													$.messager.alert("系统提示", "保存成功！");
-													$.messager.confirm("系统提示", "该记录保存成功，是否关闭页面？", function(r) {
-														if (r) {
-															closeCurrTab();
-														}
-													});
-												} else {
-													if(result.errorInfo) {
-														$.messager.alert("系统提示", result.errorInfo);
-													} else {
-														$.messager.alert("系统提示", "保存失败！");
-													}
-												}
-								        	}
-							            });
+						$("#sampleId").val(result.id);
+						$.ajax({
+			                url : "/project/manager/save",
+			                type : 'post',
+			                dataType : 'json',
+			                data : $("#fm1").serialize(),
+			                success:function(result) {
+			                    //回调函数 
+								if (result.success) {
+									debugger;
+									$.messager.alert("系统提示", "保存成功！");
+									$.messager.confirm("系统提示", "该记录保存成功，是否关闭页面？", function(r) {
+										if (r) {
+											closeCurrTab();
+										}
+									});
+								} else {
+									if(result.errorInfo) {
+										$.messager.alert("系统提示", result.errorInfo);
 									} else {
 										$.messager.alert("系统提示", "保存失败！");
 									}
-					        	}
-				            });
-						} else {
-							$.messager.alert("系统提示", "相机被占用，请重新选择！");
-						}
+								}
+				        	}
+			            });
 					} else {
 						$.messager.alert("系统提示", "保存失败！");
 					}
-                }
+	        	}
 			});
 		}
-	}
+	};
 	
 	function disabledButTrue(Bool) {
 		debugger

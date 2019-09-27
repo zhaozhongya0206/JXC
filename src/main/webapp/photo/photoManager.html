@@ -159,16 +159,29 @@
             });*/
 
 	function openAddDialog() {
-		$("#dlg").dialog("open").dialog("setTitle", "添加相机设置信息");
-		$("#codeType").combobox('select', "H264信号源");//默认选中第一项
-		$("#frameRate").combobox('select', "10");//默认选中第一项
-		$("#photoResolution").combobox('select', "800*600");//默认选中第一项
-		$("#videoFormat").combobox('select', "mp4");//默认选中第一项
-		$("#photoStatus").combobox('select', "0");//默认选中第一项
-		$("#createTime").datebox("setValue", genTodayStr());
-		url = "/photo/manager/save";
-		$('#file').filebox({prompt:"请选择文件..."});//回填
-		fileBoolean=true;
+        $.ajax({
+             url : "/photo/manager/comboList",
+             type : 'post',
+             dataType : 'json',
+             success:function(result) {
+            	 debugger;
+				if (result.length == 4) {
+					$.messager.alert("系统提示", "添加相机数量不能超过四个！");
+					return false;
+				} else {
+					$("#dlg").dialog("open").dialog("setTitle", "添加相机设置信息");
+					$("#codeType").combobox('select', "H264信号源");//默认选中第一项
+					$("#frameRate").combobox('select', "10");//默认选中第一项
+					$("#photoResolution").combobox('select', "800*600");//默认选中第一项
+					$("#videoFormat").combobox('select', "mp4");//默认选中第一项
+					$("#photoStatus").combobox('select', "0");//默认选中第一项
+					$("#createTime").datebox("setValue", genTodayStr());
+					url = "/photo/manager/save";
+					$('#file').filebox({prompt:"请选择文件..."});//回填
+					fileBoolean=true;
+				}
+      		}
+         });
 	}
 
 	function openModifyDialog() {

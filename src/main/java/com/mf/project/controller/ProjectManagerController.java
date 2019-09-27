@@ -108,6 +108,7 @@ public class ProjectManagerController {
 			resultMap.put("success", false);
 			return resultMap;
 		}
+		projectManager.setCreateTime(new Timestamp(System.currentTimeMillis()));
 		projectManager.setUpdateTime(new Timestamp(System.currentTimeMillis()));
 		if(projectManager.getId() != null){
 			ProjectManager dto = projectManagerService.findById(projectManager.getId());
@@ -136,7 +137,6 @@ public class ProjectManagerController {
 			}*/
 			//新增时设置默认值
 			projectManager.setProjectFlag(0);
-			projectManager.setCreateTime(new Timestamp(System.currentTimeMillis()));
 			logService.save(new Log(Log.ADD_ACTION,"添加项目设置信息"+projectManager));
 		}
 		projectManagerService.save(projectManager);
