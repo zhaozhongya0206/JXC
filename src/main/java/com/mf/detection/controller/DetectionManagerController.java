@@ -193,6 +193,7 @@ public class DetectionManagerController {
 	public Map<String, Object> capturePic(@RequestParam(value="photoCode") String photoCode, @RequestParam(value="timeDisplay") String timeDisplay) throws Exception {
 		log.info("capturePic photoCode: " + photoCode + ",timeDisplay:"+timeDisplay);
 		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
 		try {
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("photo", photoCode);
