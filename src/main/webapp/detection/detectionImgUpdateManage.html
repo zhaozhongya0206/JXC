@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>监控设置修改</title> 
+	<title>监控设置</title> 
 </head>
 <body>
     <!-- <h1>画板</h1> -->
@@ -53,8 +53,11 @@
 								<div class="get_class">获取画面</div>
 				            </ul>
 							<input id="videoSet1" type="radio" name="detectionType" style="width: 20px" value="1" ></input><label for="videoSet1">运动</label>
-	            			<input id="videoSet2" type="radio" name="detectionType" style="width: 20px" value="2"></input><label for="videoSet2">数字识别</label>
-	            			<input id="videoSet3" type="radio" name="detectionType" style="width: 20px" value="3"></input><label for="videoSet3">颜色</label>
+	            			&nbsp;&nbsp;&nbsp;<input id="videoSet3" type="radio" name="detectionType" style="width: 20px" value="3"></input><label for="videoSet3">颜色</label>
+	            			<br>
+	            			<span><input id="videoSet2" type="radio" name="detectionType" style="width: 20px" value="2"/><label for="videoSet2">数字识别</label>
+							&nbsp;<input type="text" id="digitSectionSmall" name="digitSectionSmall" style="width: 50px" />
+							~ <input type="text" id="digitSectionBig" name="digitSectionBig" style="width: 50px" /></span>
 							<br/>
 							<br/>
 						</td>
@@ -133,7 +136,6 @@ window.onload = function() {
 		$.messager.alert("系统提示", "系统异常，请稍后重试！");
 		return false;
 	};
-	
 	var screenWidth = document.documentElement.clientWidth;
 	var screenHeight = document.documentElement.clientHeight;
 	var container=$(".container");
@@ -257,6 +259,34 @@ window.onload = function() {
     })
     function saveDetectionImg(leftX, leftY, widthDraw, heightDraw, typeDraw, id) {
     	debugger;
+    	var detectionType = $("input[type='radio']:checked").val();
+		if(detectionType == "2") {
+			var digitSectionSmall = $("#digitSectionSmall").val();
+			var digitSectionBig = $("#digitSectionBig").val();
+			if (!digitSectionSmall && !digitSectionBig) {
+				$.messager.alert("系统提示", "数字目标请输入限值！");
+				return false;
+			}
+			var digit = /^-?\d+(\.\d+)?$/;
+			if (digitSectionSmall) {
+				if (!digit.test(digitSectionSmall)) {
+					$.messager.alert("系统提示", "只能输入负数或数字");
+					return false;
+				}
+			}
+			if (digitSectionBig) {
+				if (!digit.test(digitSectionBig)) {
+					$.messager.alert("系统提示", "只能输入负数或数字");
+					return false;
+				}
+			}
+			if(digitSectionSmall && digitSectionBig){
+				if (!(parseFloat(digitSectionBig)>parseFloat(digitSectionSmall))) {
+					$.messager.alert("系统提示", "不能大于限值！");
+					return false;
+				}
+			}
+		}
     	if ($("#fm").form("validate")) {
 			$.ajax({
 				data : {
@@ -265,7 +295,9 @@ window.onload = function() {
 					"projectName" : $("#projectName").val(),
 					"detectionCode" : $("#detectionCode").val(),
 					"detectionName" : $("#detectionNameCombo").combobox('getValue'),
-					"detectionType" : $("input[type='radio']:checked").val(),
+					"detectionType" : detectionType,
+					"digitSectionSmall" : digitSectionSmall,
+					"digitSectionBig" : digitSectionBig,
 					"detectionLeftx" : leftX,
 					"detectionLefty" : leftY,
 					"detectionWidth" : widthDraw,
@@ -639,7 +671,6 @@ window.onload = function() {
 			});
 		}
 	}
-	
 	//先查出所有已绘制图形
 	function findDetectionByProjectId() {
 		listViewX = [];
@@ -692,6 +723,8 @@ window.onload = function() {
 	//初始化form表单内容
 	function initForm() {
 		$("#videoSet1").prop("checked", true);
+		$("#digitSectionSmall").val("");
+		$("#digitSectionBig").val("");
 		$("#createTime").val(genTodayStr());
 		$.ajax({
 			data : {

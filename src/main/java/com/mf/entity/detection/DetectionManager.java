@@ -21,6 +21,8 @@ public class DetectionManager {
     private String detectionCode;//检测区域编号
     private String detectionName;//检测区域名称
     private String detectionType;//检测区域类型(1-运动 2-数字识别 3-颜色)
+    private String digitSectionSmall;//2-数字识别 最小区间值)
+    private String digitSectionBig;//2-数字识别 最大区间值)
     private String photoCode;//相机编号
     private String photoName;//相机名称
     private Timestamp createTime;//创建时间
@@ -296,24 +298,39 @@ public class DetectionManager {
 		this.listType = listType;
 	}
 
+	@Basic
+    @Column(name = "digit_section_small")
+	public String getDigitSectionSmall() {
+		return digitSectionSmall;
+	}
+
+	public void setDigitSectionSmall(String digitSectionSmall) {
+		this.digitSectionSmall = digitSectionSmall;
+	}
+
+	@Basic
+    @Column(name = "digit_section_big")
+	public String getDigitSectionBig() {
+		return digitSectionBig;
+	}
+
+	public void setDigitSectionBig(String digitSectionBig) {
+		this.digitSectionBig = digitSectionBig;
+	}
+
 	@Override
 	public String toString() {
-		return "DetectionManager [id=" + id + ", detectionCode="
-				+ detectionCode + ", detectionName=" + detectionName
-				+ ", detectionType=" + detectionType + ", photoCode="
-				+ photoCode + ", photoName=" + photoName + ", createTime="
-				+ createTime + ", detectionLeftx=" + detectionLeftx
-				+ ", detectionLefty=" + detectionLefty + ", detectionWidth="
-				+ detectionWidth + ", detectionHeight=" + detectionHeight
-				+ ", type=" + type + ", createTimeStart=" + createTimeStart
-				+ ", createTimeEnd=" + createTimeEnd + ", projectName="
-				+ projectName + ", detectionTypeName=" + detectionTypeName
-				+ ", exceptionVido=" + exceptionVido + ", exceptionImg="
-				+ exceptionImg + ", listX=" + Arrays.toString(listX)
-				+ ", listY=" + Arrays.toString(listY) + ", listWidth="
-				+ Arrays.toString(listWidth) + ", listHeight="
-				+ Arrays.toString(listHeight) + ", listType="
-				+ Arrays.toString(listType) + "]";
+		return "DetectionManager [id=" + id + ", detectionCode=" + detectionCode + ", detectionName=" + detectionName
+				+ ", detectionType=" + detectionType + ", digitSectionSmall=" + digitSectionSmall + ", digitSectionBig="
+				+ digitSectionBig + ", photoCode=" + photoCode + ", photoName=" + photoName + ", createTime="
+				+ createTime + ", detectionLeftx=" + detectionLeftx + ", detectionLefty=" + detectionLefty
+				+ ", detectionWidth=" + detectionWidth + ", detectionHeight=" + detectionHeight + ", type=" + type
+				+ ", projectId=" + projectId + ", canvasWidth=" + canvasWidth + ", canvasHeight=" + canvasHeight
+				+ ", projectName=" + projectName + ", createTimeStart=" + createTimeStart + ", createTimeEnd="
+				+ createTimeEnd + ", detectionTypeName=" + detectionTypeName + ", exceptionVido=" + exceptionVido
+				+ ", exceptionImg=" + exceptionImg + ", listX=" + Arrays.toString(listX) + ", listY="
+				+ Arrays.toString(listY) + ", listWidth=" + Arrays.toString(listWidth) + ", listHeight="
+				+ Arrays.toString(listHeight) + ", listType=" + Arrays.toString(listType) + "]";
 	}
 
 }
