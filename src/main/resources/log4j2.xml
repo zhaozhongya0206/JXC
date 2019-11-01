@@ -5,8 +5,8 @@
 	      <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY" />
 	      <PatternLayout pattern="%X{requestId} %d{HH:mm:ss.SSS}[%5p][%t](%c{1.}):%m%n"/>  
 	    </Console>
-		<RollingFile name="RollingFile" fileName="C:/JXC.log"
-			filePattern="C:/JXC.log.%d{yyyy-MM-dd}">
+		<RollingFile name="RollingFile" fileName="D:/JXC.log"
+			filePattern="D:/JXC.log.%d{yyyy-MM-dd}">
 			<ThresholdFilter level="info" onMatch="ACCEPT"
 				onMismatch="DENY" />
 			<PatternLayout
