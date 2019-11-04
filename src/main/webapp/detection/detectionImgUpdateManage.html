@@ -55,9 +55,9 @@
 							<input id="videoSet1" type="radio" name="detectionType" style="width: 20px" value="1" ></input><label for="videoSet1">运动</label>
 	            			&nbsp;&nbsp;&nbsp;<input id="videoSet3" type="radio" name="detectionType" style="width: 20px" value="3"></input><label for="videoSet3">颜色</label>
 	            			<br>
-	            			<span><input id="videoSet2" type="radio" name="detectionType" style="width: 20px" value="2"/><label for="videoSet2">数字识别</label>
-							&nbsp;<input type="text" id="digitSectionSmall" name="digitSectionSmall" style="width: 50px" />
-							~ <input type="text" id="digitSectionBig" name="digitSectionBig" style="width: 50px" /></span>
+	            			<input id="videoSet2" type="radio" name="detectionType" style="width: 20px" value="2"/><label for="videoSet2">数字识别</label>
+							&nbsp;<div id="digitSectionId" style="display: none"><input type="text" id="digitSectionSmall" name="digitSectionSmall" style="width: 50px;"/>
+							~ <input type="text" id="digitSectionBig" name="digitSectionBig" style="width: 50px;"/></div>
 							<br/>
 							<br/>
 						</td>
@@ -136,6 +136,17 @@ window.onload = function() {
 		$.messager.alert("系统提示", "系统异常，请稍后重试！");
 		return false;
 	};
+	$("#videoSet2").click(function(){
+		$("#digitSectionId").css('display','inline-block');
+		$("#digitSectionSmall").val("");
+		$("#digitSectionBig").val("");
+	});
+	$("#videoSet1").click(function(){
+		$("#digitSectionId").css('display', 'none');
+	});
+	$("#videoSet3").click(function(){
+		$("#digitSectionId").css('display', 'none');
+	});	
 	var screenWidth = document.documentElement.clientWidth;
 	var screenHeight = document.documentElement.clientHeight;
 	var container=$(".container");
@@ -726,6 +737,7 @@ window.onload = function() {
 		$("#digitSectionSmall").val("");
 		$("#digitSectionBig").val("");
 		$("#createTime").val(genTodayStr());
+		$("#digitSectionId").css('display', 'none');
 		$.ajax({
 			data : {
 				"projectId" : projectId
