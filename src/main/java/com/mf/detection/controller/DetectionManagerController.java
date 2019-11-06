@@ -183,6 +183,7 @@ public class DetectionManagerController {
 		Map<String, String> resultMap = new HashMap<String, String>();
 		resultMap.put("photoCode", projectManager.getPhotoCode());
 		resultMap.put("photoName", projectManager.getPhotoName());
+		resultMap.put("projectCode", projectManager.getProjectCode());
 		resultMap.put("projectName", projectManager.getProjectName());
 		List<DetectionManager> list = detectionManagerService.findDetectionManager();
 		resultMap.put("detectionCode", getNewEquipmentNo(list.size()));

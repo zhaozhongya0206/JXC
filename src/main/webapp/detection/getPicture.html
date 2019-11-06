@@ -260,18 +260,20 @@
 				type : 'POST',
 				success : function(result) {
 					if (result.success) {
-						if(confirm("是否使用该图像？")) {
-							//关闭当前页面
-							var jq = top.jQuery;
-							var currTab = jq("#tabs").tabs('getSelected');
-							currTitle = currTab.panel('options').title;
-							jq('#tabs').tabs('close', currTitle);
-							return false;
-						} else {
-							if(playVideoFlag) {
-								$("#videoid").trigger("play");//继续播放
+						$.messager.confirm("系统提示", "是否使用该图像?", function(r) {
+							if (r) {
+								//关闭当前页面
+								var jq = top.jQuery;
+								var currTab = jq("#tabs").tabs('getSelected');
+								currTitle = currTab.panel('options').title;
+								jq('#tabs').tabs('close', currTitle);
+								return false;
+							} else {
+								if(playVideoFlag) {
+									$("#videoid").trigger("play");//继续播放
+								}
 							}
-						}
+						});
 					} else {
 						$.messager.alert("系统提示", result.errorInfo);
 						return false;
