@@ -5,6 +5,8 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -90,17 +92,23 @@ public class ProjectManagerController {
 		Map<String,Object> resultMap = new HashMap<>();
 		resultMap.put("success", false);
 		if(StringUtil.isEmpty(projectManager.getProjectCode().trim())) {
-			resultMap.put("errorInfo", "传入委托单为空，请重新重新输入！");
+			resultMap.put("errorInfo", "委托单号为空，请重新重新输入！");
 			return resultMap;
+		} else {
+			log.info("save ProjectManager: " + match(projectManager.getProjectCode().replaceAll(" ", "")));
+			if(match(projectManager.getProjectCode().replaceAll(" ", ""))){
+				resultMap.put("errorInfo", "委托单号包含中文，请重新重新输入！");
+				return resultMap;
+			}
 		}
 		projectManager.setProjectCode(projectManager.getProjectCode().trim());
 		if(StringUtil.isEmpty(projectManager.getProjectName().trim())) {
-			resultMap.put("errorInfo", "传入委托单名称为空，请重新重新输入！");
+			resultMap.put("errorInfo", "委托单名称为空，请重新重新输入！");
 			return resultMap;
 		}
 		projectManager.setProjectName(projectManager.getProjectName().trim());
 		if(StringUtil.isEmpty(projectManager.getPhotoCode())) {
-			resultMap.put("errorInfo", "传入相机编号为空，请重新重新输入！");
+			resultMap.put("errorInfo", "相机编号为空，请重新重新输入！");
 			return resultMap;
 		}
 		if(StringUtil.isEmpty(projectManager.getSampleId())) {
@@ -147,6 +155,20 @@ public class ProjectManagerController {
 		logService.save(new Log(Log.ADD_ACTION, "添加或者修改项目设置信息" + projectManagerService.findById(projectManager.getId())));
 		resultMap.put("success", true);
 		return resultMap;
+	}
+	
+	/**
+	* @param regex 正则表达式字符串
+	* @param str 要匹配的字符串
+	* @return 如果 str 符合 regex的正则表达式格式,返回true, 否则返回 false;
+	*/
+	private static boolean match(String str) {
+		Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
+		Matcher m = p.matcher(str);
+		if (m.find()) {
+			return true;
+		}
+		return false;
 	}
 	
 	/**
