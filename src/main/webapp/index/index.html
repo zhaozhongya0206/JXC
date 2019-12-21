@@ -417,7 +417,10 @@
 		// 测试自动播放
 		var file = $($($this).find("input")[5]).val();
 		var codeType = $($($this).find("input")[6]).val();
-		if(codeType == "H264文件流") {
+		if(!codeType) {
+			$("#videoid").remove();
+			$("#divPlugin").remove();
+		} else if(codeType == "H264文件流") {
 			$("#divPlugin").remove();
 			$("#u4_div").append('<video id="videoid" style="width:'+iWidth+'px; height:'+(iHeight-(count+40))+'px;" controls="controls"><source id="video_path" src="" type="video/mp4" /></video>');
 			document.getElementById("videoid").src="video/"+file;
