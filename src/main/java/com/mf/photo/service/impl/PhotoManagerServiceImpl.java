@@ -153,10 +153,12 @@ public class PhotoManagerServiceImpl implements PhotoManagerService {
 		String newVideopath = (path  + filename);
 		log.info("saveCustomer 新视频路径为:" + newVideopath);
 		// 上传到本地磁盘/服务器
+		InputStream is = null;
+		OutputStream os = null;
 		try {
 			log.info("写入本地磁盘/服务器");
-			InputStream is = multipartRequest.getInputStream();
-			OutputStream os = new FileOutputStream(new File(newVideopath));
+			is = multipartRequest.getInputStream();
+			os = new FileOutputStream(new File(newVideopath));
 			int len = 0;
 			byte[] buffer = new byte[2048];
 			while ((len = is.read(buffer)) != -1) {
@@ -167,9 +169,21 @@ public class PhotoManagerServiceImpl implements PhotoManagerService {
 			is.close();
 		} catch (FileNotFoundException e) {
 			log.error("saveCustomer FileNotFoundException: ", e);
+			if(is != null) {
+				is.close();
+			}
+			if(os != null) {
+				os.close();
+			}
 			throw new FileNotFoundException("saveCustomer FileNotFoundException:" + e.getMessage());
 		} catch (IOException e) {
 			log.error("saveCustomer IOException: ", e);
+			if(is != null) {
+				is.close();
+			}
+			if(os != null) {
+				os.close();
+			}
 			throw new IOException(e);
 		}
 		log.info("写入本地磁盘/服务器结束！");

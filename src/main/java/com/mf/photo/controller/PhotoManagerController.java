@@ -157,7 +157,7 @@ public class PhotoManagerController {
 			} catch (FileNotFoundException e1) {
 				log.error("saveCustomer FileNotFoundException: " + e1.getMessage(), e1);
 				resultMap.put("success", false);
-				resultMap.put("errorInfo", "此文件已经上传，不能重复选择！");
+				resultMap.put("errorInfo", "此文件已经上传，请选择其他文件！");
 				return resultMap;
 			} catch (Exception e) {
 				log.error("saveCustomer Exception: " + e.getMessage(), e);
