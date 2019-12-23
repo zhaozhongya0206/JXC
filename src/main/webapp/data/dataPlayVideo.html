@@ -190,7 +190,7 @@
 		var ifmSampleCode = null;
 		var ifmSampleName = null;
 		//使用正则表达式截取url地址参数
-		getQuery = function(ifmSrc, name) {
+		function getQuery(ifmSrc, name) {
 			if(ifmSrc && name) {
 				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
 				var r = ifmSrc.substr(ifmSrc.indexOf("\?") + 1).match(reg);
@@ -200,8 +200,8 @@
 			}
 		};
 		//获取传入参数id
-		var ifmSrc = $(window.parent.document).find("#ifm").attr("src");
 		debugger;
+		var ifmSrc = $(window.parent.document).find("#ifm").attr("src");
 		var projectId = getQuery(ifmSrc, "projectId");
 		if(projectId) {
 			$.ajax({
@@ -216,7 +216,7 @@
 						ifmProjectName = result.projectName;
 						ifmSampleCode = result.sampleCode;
 						ifmSampleName = result.sampleName;
-						rowStyler(result.projectCode, result.projectName, result.sampleCode, result.sampleName);
+						rowStyler(1, 20, result.projectCode, result.projectName, result.sampleCode, result.sampleName);
 					}
 				}
 			});
@@ -225,12 +225,12 @@
 		window.top["reload_taskTab"] = function(projectId) {
 			//rowStyler(projectId);
 		};
-		function rowStyler(projectCode, projectName, sampleCode, sampleName) {
+		function rowStyler(curr, pageSize, projectCode, projectName, sampleCode, sampleName) {
 	    	$.ajax({
 	            type: "POST", //提交数据的类型 分为POST和GET  
 	            async: false,
 	            url: "/data/play/list",  //提交url 注意url必须小写 
-	            data: {"page": 1, "rows": 20, "projectCode" : projectCode, "projectName" : projectName, "sampleCode" : sampleCode, "sampleName" : sampleName},  
+	            data: {"page": curr, "rows": pageSize, "projectCode" : projectCode, "projectName" : projectName, "sampleCode" : sampleCode, "sampleName" : sampleName},  
 	            success: function (data) {
 	                $('#dg').datagrid('loadData', data);
 	            }
@@ -381,7 +381,8 @@
 							debugger;
 							if (resultData.success) {
 								if(ifmProjectCode && ifmProjectName && ifmSampleCode && ifmSampleName) {
-									rowStyler(ifmProjectCode, ifmProjectName, ifmSampleCode, ifmSampleName);	
+									var options = $('#dg').datagrid('getPager').data("pagination").options;
+									rowStyler(options.pageNumber, options.pageSize, ifmProjectCode, ifmProjectName, ifmSampleCode, ifmSampleName);
 								} else {
 									searchQuery();
 								}
@@ -430,9 +431,10 @@
 							debugger;
 							if (resultData.success) {
 								if(ifmProjectCode && ifmProjectName && ifmSampleCode && ifmSampleName) {
-									rowStyler(ifmProjectCode, ifmProjectName, ifmSampleCode, ifmSampleName);	
+									var options = $('#dg').datagrid('getPager').data("pagination").options;
+								   rowStyler(options.pageNumber, options.pageSize, ifmProjectCode, ifmProjectName, ifmSampleCode, ifmSampleName);
 								} else {
-									searchQuery();
+								   searchQuery();
 								}
 							} else {
 								$.messager.alert("系统提示", "系统异常，请稍后再试！");

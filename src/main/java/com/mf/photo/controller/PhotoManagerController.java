@@ -1,5 +1,6 @@
 package com.mf.photo.controller;
 
+import java.io.FileNotFoundException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -153,12 +154,15 @@ public class PhotoManagerController {
 						return resultMap;
 					}
 				}
+			} catch (FileNotFoundException e1) {
+				log.error("saveCustomer FileNotFoundException: " + e1.getMessage(), e1);
+				resultMap.put("success", false);
+				resultMap.put("errorInfo", "此文件已经上传，不能重复选择！");
+				return resultMap;
 			} catch (Exception e) {
 				log.error("saveCustomer Exception: " + e.getMessage(), e);
 				throw new Exception(e);
 			}
-		} else if("H264文件流".equals(photoManager.getCodeType())){
-			photoManager.setFile(resultDto.getFile());
 		}
 		photoManagerService.save(photoManager);
 		logService.save(new Log(Log.ADD_ACTION, "添加或者修改相机设置信息" + photoManagerService.findById(photoManager.getId())));

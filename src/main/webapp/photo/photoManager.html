@@ -12,243 +12,6 @@
 <script type="text/javascript" src="/static/js/date.js"></script>
 <script type="text/javascript" src="./jquery-form.js"></script>
 <script type="text/javascript" src="./ajaxfileupload.js"></script>
-<script type="text/javascript">
-	var url;
-	var fileBoolean=true;
-	$(function() {
-		// 初始化内容
-		$('#codeType').combobox({
-			onSelect: function(record){
-				debugger;
-				if(record.value == "H264文件流") {
-					$("#fileTd").css("display", "block");
-					$("#fileTdName").css("display", "block");
-					//先清空
-					$('#file').filebox('reset');
-					$('#file').textbox('setValue', '');
-				} else {
-					$("#fileTd").css("display", "none");
-					$("#fileTdName").css("display", "none");
-					//先清空
-					$('#file').filebox('reset');
-					$('#file').textbox('setValue', '');
-				}
-			}
-		});
-	});
-	function searchQuery() {
-		$("#dg").datagrid('load', {
-			"photoCode" : $("#photoCode").val(),
-			"photoName" : $("#photoName").val()
-		});
-	}
-
-	//清空form表单查询条件
-	function clearQuery() {
-		$("#queryFrom").form('clear');
-	}
-	
-	function resetValue() {
-		$("#fm").form('clear');
-	}
-	function closeDialog() {
-		$("#dlg").dialog("close");
-		resetValue();
-	}
-
-	function save() {
-		if($("#fm").form("validate")) {
-			debugger;
-			if(fileBoolean) {
-				if($("#codeType").combobox('getValue') == "H264文件流") {
-					var fileName = $('#file').textbox('getValue');
-					if(!fileName) {
-						$.messager.alert("系统提示", "请选择文件进行上传！");
-						return false;
-					}
-				}
-			}
-			$("#fm").ajaxSubmit({
-                url : url,
-                type : 'post',
-                success:function(result) {
-                    //回调函数 
-                    debugger;
-					if (result.success) {
-						$.messager.alert("系统提示", "保存成功！");
-						resetValue();
-						$("#dlg").dialog("close");
-						$("#dg").datagrid("reload");
-					} else {
-						$.messager.alert("系统提示", result.errorInfo);
-					}
-	        	}
-            });
-		}
-	}
-				/* var formData = new FormData($("#fm2")[0]);
-				$.ajax({
-	                url : url,
-	                type : 'post',
-	                dataType : 'json',
-	                cache: false,
-	                async: false,
-	                processData : false,  //必须false才会避开jQuery对 formdata 的默认处理
-	                contentType : false,  //必须false才会自动加上正确的Content-Type
-	                data : formData,//$("#fm").serialize(),
-	                success:function(result) {
-	                	debugger;
-	                    //回调函数 
-						if (result.success) {
-							$.ajax({
-				                url : url,
-				                type : 'post',
-				                dataType : 'json',
-				                data : $("#fm").serialize(),
-				                success:function(result) {
-				                    //回调函数 
-									if (result.success) {
-										$.messager.alert("系统提示", "保存成功！");
-										resetValue();
-										$("#dlg").dialog("close");
-										$("#dg").datagrid("reload");
-									} else {
-										$.messager.alert("系统提示", result.errorInfo);
-									}
-					        	}
-				            });
-						} else {
-							$.messager.alert("系统提示", result.errorInfo);
-						}
-		        	}
-	            });
-			} else {
-				$.ajax({
-	                url : url,
-	                type : 'post',
-	                dataType : 'json',
-	                data : $("#fm").serialize(),
-	                success:function(result) {
-	                    //回调函数 
-						if (result.success) {
-							$.messager.alert("系统提示", "保存成功！");
-							resetValue();
-							$("#dlg").dialog("close");
-							$("#dg").datagrid("reload");
-						} else {
-							$.messager.alert("系统提示", result.errorInfo);
-						}
-		        	}
-	            });
-			} */
-		//}
-			/*$("#fm").ajaxSubmit({
-                url : url,
-                type : 'post',
-                success:function(result) {
-                    //回调函数 
-					if (result.success) {
-						$.messager.alert("系统提示", "保存成功！");
-						resetValue();
-						$("#dlg").dialog("close");
-						$("#dg").datagrid("reload");
-					} else {
-						$.messager.alert("系统提示", result.errorInfo);
-					}
-	        	}
-            });*/
-
-	function openAddDialog() {
-        $.ajax({
-             url : "/photo/manager/comboList",
-             type : 'post',
-             dataType : 'json',
-             success:function(result) {
-            	 debugger;
-				if (result.length == 4) {
-					$.messager.alert("系统提示", "添加相机数量不能超过四个！");
-					return false;
-				} else {
-					$("#dlg").dialog("open").dialog("setTitle", "添加相机设置信息");
-					$("#codeType").combobox('select', "H264信号源");//默认选中第一项
-					$("#frameRate").combobox('select', "10");//默认选中第一项
-					$("#photoResolution").combobox('select', "800*600");//默认选中第一项
-					$("#videoFormat").combobox('select', "mp4");//默认选中第一项
-					$("#photoStatus").combobox('select', "0");//默认选中第一项
-					$("#createTime").datebox("setValue", genTodayStr());
-					url = "/photo/manager/save";
-					$('#file').filebox({prompt:"请选择文件..."});//回填
-					fileBoolean=true;
-				}
-      		}
-         });
-	}
-
-	function openModifyDialog() {
-		debugger;
-		var selectedRows = $("#dg").datagrid("getSelections");
-		if (selectedRows.length != 1) {
-			$.messager.alert("系统提示", "请选择一条要修改的数据！");
-			return;
-		}
-		var row = selectedRows[0];
-		$("#dlg").dialog("open").dialog("setTitle", "修改相机设置信息");
-		$("#fm").form("load", row);
-		
-		if(row.codeType == "H264文件流") {
-			$("#fileTd").css("display", "block");
-			$("#fileTdName").css("display", "block");
-			$('#file').filebox({prompt:row.file});//回填
-			fileBoolean=false;
-		} else {
-			$("#fileTd").css("display", "none");
-			$("#fileTdName").css("display", "none");
-			//先清空
-			$('#file').filebox('reset');
-			$('#file').textbox('setValue', '');
-		}
-		$("#createTime").datebox("setValue", genTodayStr());
-		url = "/photo/manager/save?id=" + row.id;
-	}
-	function deleteOneGrid() {
-		var selectedRows = $("#dg").datagrid("getSelections");
-		if (selectedRows.length == 0) {
-			$.messager.alert("系统提示", "请选择要删除的数据！");
-			return;
-		}
-		var strIds = [];
-		for (var i = 0; i < selectedRows.length; i++) {
-			strIds.push(selectedRows[i].id);
-		}
-		var ids = strIds.join(",");
-		$.messager.confirm("系统提示", "您确定要删除这条数据吗?", function(r) {
-			if (r) {
-				$.post("/photo/manager/delete", {
-					ids : ids
-				}, function(result) {
-					if (result.success) {
-						$.messager.alert("系统提示", "数据已成功删除！");
-						$("#dg").datagrid("reload");
-					} else {
-						$.messager.alert("系统提示", result.errorInfo);
-					}
-				}, "json");
-			}
-		});
-	};
-	//格式化flag标识
-	function formatFlag(value) {
-		if (value == null || value == '') {
-			return '';
-		}
-		if(value == '0') {
-			return "闲置";
-		}
-		if(value == '1') {
-			return "已使用";
-		}
-	};
-</script>
 </head>
 <body class="easyui-layout">
 
@@ -422,4 +185,243 @@
 		<a href="javascript:closeDialog()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
 	</div>
 </body>
+<script type="text/javascript">
+	var url;
+	var fileBoolean=true;
+	$(function() {
+		// 初始化内容
+		$('#codeType').combobox({
+			onSelect: function(record){
+				debugger;
+				if(record.value == "H264文件流") {
+					$("#fileTd").css("display", "block");
+					$("#fileTdName").css("display", "block");
+					//先清空
+					$('#file').filebox('reset');
+					$('#file').textbox('setValue', '');
+				} else {
+					$("#fileTd").css("display", "none");
+					$("#fileTdName").css("display", "none");
+					//先清空
+					$('#file').filebox('reset');
+					$('#file').textbox('setValue', '');
+				}
+			}
+		});
+	});
+	function searchQuery() {
+		$("#dg").datagrid('load', {
+			"photoCode" : $("#photoCode").val(),
+			"photoName" : $("#photoName").val()
+		});
+	}
+
+	//清空form表单查询条件
+	function clearQuery() {
+		$("#queryFrom").form('clear');
+	}
+	
+	function resetValue() {
+		$("#fm").form('clear');
+	}
+	function closeDialog() {
+		$("#dlg").dialog("close");
+		resetValue();
+	}
+
+			/* var formData = new FormData($("#fm2")[0]);
+			$.ajax({
+                url : url,
+                type : 'post',
+                dataType : 'json',
+                cache: false,
+                async: false,
+                processData : false,  //必须false才会避开jQuery对 formdata 的默认处理
+                contentType : false,  //必须false才会自动加上正确的Content-Type
+                data : formData,//$("#fm").serialize(),
+                success:function(result) {
+                	debugger;
+                    //回调函数 
+					if (result.success) {
+						$.ajax({
+			                url : url,
+			                type : 'post',
+			                dataType : 'json',
+			                data : $("#fm").serialize(),
+			                success:function(result) {
+			                    //回调函数 
+								if (result.success) {
+									$.messager.alert("系统提示", "保存成功！");
+									resetValue();
+									$("#dlg").dialog("close");
+									$("#dg").datagrid("reload");
+								} else {
+									$.messager.alert("系统提示", result.errorInfo);
+								}
+				        	}
+			            });
+					} else {
+						$.messager.alert("系统提示", result.errorInfo);
+					}
+	        	}
+            });
+		} else {
+			$.ajax({
+                url : url,
+                type : 'post',
+                dataType : 'json',
+                data : $("#fm").serialize(),
+                success:function(result) {
+                    //回调函数 
+					if (result.success) {
+						$.messager.alert("系统提示", "保存成功！");
+						resetValue();
+						$("#dlg").dialog("close");
+						$("#dg").datagrid("reload");
+					} else {
+						$.messager.alert("系统提示", result.errorInfo);
+					}
+	        	}
+            });
+		} */
+	//}
+		/*$("#fm").ajaxSubmit({
+               url : url,
+               type : 'post',
+               success:function(result) {
+                   //回调函数 
+				if (result.success) {
+					$.messager.alert("系统提示", "保存成功！");
+					resetValue();
+					$("#dlg").dialog("close");
+					$("#dg").datagrid("reload");
+				} else {
+					$.messager.alert("系统提示", result.errorInfo);
+				}
+        	}
+           });*/
+
+	function openAddDialog() {
+        $.ajax({
+             url : "/photo/manager/comboList",
+             type : 'post',
+             dataType : 'json',
+             success:function(result) {
+            	 debugger;
+				if (result.length == 4) {
+					$.messager.alert("系统提示", "添加相机数量不能超过四个！");
+					return false;
+				} else {
+					$("#dlg").dialog("open").dialog("setTitle", "添加相机设置信息");
+					$("#codeType").combobox('select', "H264信号源");//默认选中第一项
+					$("#frameRate").combobox('select', "10");//默认选中第一项
+					$("#photoResolution").combobox('select', "800*600");//默认选中第一项
+					$("#videoFormat").combobox('select', "mp4");//默认选中第一项
+					$("#photoStatus").combobox('select', "0");//默认选中第一项
+					$("#createTime").datebox("setValue", genTodayStr());
+					url = "/photo/manager/save";
+					$('#file').filebox({prompt:"请选择文件..."});//回填
+					fileBoolean=true;
+				}
+      		}
+         });
+	}
+
+	function openModifyDialog() {
+		debugger;
+		var selectedRows = $("#dg").datagrid("getSelections");
+		if (selectedRows.length != 1) {
+			$.messager.alert("系统提示", "请选择一条要修改的数据！");
+			return;
+		}
+		var row = selectedRows[0];
+		$("#dlg").dialog("open").dialog("setTitle", "修改相机设置信息");
+		$("#fm").form("load", row);
+		
+		if(row.codeType == "H264文件流") {
+			$("#fileTd").css("display", "block");
+			$("#fileTdName").css("display", "block");
+			$('#file').filebox({prompt:row.file});//回填
+			fileBoolean=false;
+		} else {
+			$("#fileTd").css("display", "none");
+			$("#fileTdName").css("display", "none");
+			//先清空
+			$('#file').filebox('reset');
+			$('#file').textbox('setValue', '');
+		}
+		$("#createTime").datebox("setValue", genTodayStr());
+		url = "/photo/manager/save?id=" + row.id;
+	}
+	
+	function save() {
+		if($("#fm").form("validate")) {
+			debugger;
+			if(fileBoolean) {
+				if($("#codeType").combobox('getValue') == "H264文件流") {
+					var fileName = $('#file').textbox('getValue');
+					if(!fileName) {
+						$.messager.alert("系统提示", "请选择文件进行上传！");
+						return false;
+					}
+				}
+			}
+			$("#fm").ajaxSubmit({
+                url : url,
+                type : 'post',
+                success:function(result) {
+                    //回调函数 
+                    debugger;
+					if (result.success) {
+						$.messager.alert("系统提示", "保存成功！");
+						resetValue();
+						$("#dlg").dialog("close");
+						$("#dg").datagrid("reload");
+					} else {
+						$.messager.alert("系统提示", result.errorInfo);
+					}
+	        	}
+            });
+		}
+	}
+	
+	function deleteOneGrid() {
+		var selectedRows = $("#dg").datagrid("getSelections");
+		if (selectedRows.length == 0) {
+			$.messager.alert("系统提示", "请选择要删除的数据！");
+			return;
+		}
+		var strIds = [];
+		for (var i = 0; i < selectedRows.length; i++) {
+			strIds.push(selectedRows[i].id);
+		}
+		var ids = strIds.join(",");
+		$.messager.confirm("系统提示", "您确定要删除这条数据吗?", function(r) {
+			if (r) {
+				$.post("/photo/manager/delete", {
+					ids : ids
+				}, function(result) {
+					if (result.success) {
+						$.messager.alert("系统提示", "数据已成功删除！");
+						$("#dg").datagrid("reload");
+					} else {
+						$.messager.alert("系统提示", result.errorInfo);
+					}
+				}, "json");
+			}
+		});
+	};
+	//格式化flag标识
+	function formatFlag(value) {
+		if (value == null || value == '') {
+			return '';
+		}
+		if(value == '0') {
+			return "闲置";
+		}
+		if(value == '1') {
+			return "已使用";
+		}
+	};
+</script>
 </html>

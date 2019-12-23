@@ -106,7 +106,7 @@
         <br/>
         <b style="color: red;font-family: 微软雅黑;font-size: 15px;">
                   &nbsp;&nbsp;&nbsp;&nbsp;系统提示：<br/>
-                  &nbsp;&nbsp;&nbsp;&nbsp;请在当前页面操作完成后再进行关闭。
+                  &nbsp;&nbsp;&nbsp;&nbsp;每个检测目标操作完成后请保存。
         </b>
     </div>
 	<canvas id="canvas">
@@ -131,7 +131,7 @@ function clearNoNum(obj){
 window.onload = function() {
 	debugger;
 	//使用正则表达式截取url地址参数
-	getQuery = function(ifmSrc, name) {
+	function getQuery(ifmSrc, name) {
 		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
 		var r = ifmSrc.substr(ifmSrc.indexOf("\?") + 1).match(reg);
 		if (r != null)
