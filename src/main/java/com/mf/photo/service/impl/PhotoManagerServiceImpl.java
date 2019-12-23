@@ -134,7 +134,7 @@ public class PhotoManagerServiceImpl implements PhotoManagerService {
 	 * @throws IOException
 	 */
 	@Override
-	public String MP4(CommonsMultipartFile multipartRequest, String filename) throws Exception {
+	public String MP4(CommonsMultipartFile multipartRequest, String filename) throws FileNotFoundException, IOException, Exception {
 		// MP4文件格式直接上传保存路径
 		String webappRoot = this.getClass().getResource("/").getPath().replaceFirst("/", "").replaceAll("WEB-INF/classes", "");
 		//String path = "src/main/webapp/index/video/";
@@ -167,7 +167,7 @@ public class PhotoManagerServiceImpl implements PhotoManagerService {
 			is.close();
 		} catch (FileNotFoundException e) {
 			log.error("saveCustomer FileNotFoundException: ", e);
-			throw new Exception(e);
+			throw new FileNotFoundException("saveCustomer FileNotFoundException:" + e.getMessage());
 		} catch (IOException e) {
 			log.error("saveCustomer IOException: ", e);
 			throw new IOException(e);
