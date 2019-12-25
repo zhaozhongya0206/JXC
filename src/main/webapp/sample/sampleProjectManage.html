@@ -174,54 +174,56 @@
 	</div>
 </body>
 <script type="text/javascript">
-	//使用正则表达式截取url地址参数
-	function getQuery(ifmSrc, name) {
-		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-		var r = ifmSrc.substr(ifmSrc.indexOf("\?") + 1).match(reg);
-		if (r != null)
-			return unescape(r[2]);
-		return null;
-	};
-	//获取传入参数id
-	var ifmSrc = $(window.parent.document).find("#ifm").attr("src");
-	var projectId = getQuery(ifmSrc, "id");
-	var projectFlag = getQuery(ifmSrc, "projectFlag");
-	var isUpdateBool = getQuery(ifmSrc, "isUpdateBool");
-	//初始化页面
-	defaultValue();
-	if(projectId) {
-		//先清空
-		//resetValue();
-		//先还原禁用按钮
-		//disabledButTrue(false);
-		$.ajax({
-			url : "/sample/manager/findProjectSample",
-			traditional : true,
-			dataType : "json",
-			type : 'POST',
-			data : {
-				"projectId" : projectId,
-				"isUpdateBool" : isUpdateBool
-			},
-			success : function(result) {
-				debugger;
-				if (result.success) {
-					$("#fm1").form("load", result.projectManager);
-					$("#fm2").form("load", result.sampleManager);
-				} else {
-					$.messager.alert("系统提示", "系统异常，请稍后再试！");
+	window.onload = function() {
+		//使用正则表达式截取url地址参数
+		function getQuery(ifmSrc, name) {
+			var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+			var r = ifmSrc.substr(ifmSrc.indexOf("\?") + 1).match(reg);
+			if (r != null)
+				return unescape(r[2]);
+			return null;
+		};
+		//获取传入参数id
+		var ifmSrc = $(window.parent.document).find("#ifm").attr("src");
+		var projectId = getQuery(ifmSrc, "id");
+		var projectFlag = getQuery(ifmSrc, "projectFlag");
+		var isUpdateBool = getQuery(ifmSrc, "isUpdateBool");
+		//初始化页面
+		defaultValue();
+		if(projectId) {
+			//先清空
+			//resetValue();
+			//先还原禁用按钮
+			//disabledButTrue(false);
+			$.ajax({
+				url : "/sample/manager/findProjectSample",
+				traditional : true,
+				dataType : "json",
+				type : 'POST',
+				data : {
+					"projectId" : projectId,
+					"isUpdateBool" : isUpdateBool
+				},
+				success : function(result) {
+					debugger;
+					if (result.success) {
+						$("#fm1").form("load", result.projectManager);
+						$("#fm2").form("load", result.sampleManager);
+					} else {
+						$.messager.alert("系统提示", "系统异常，请稍后再试！");
+					}
 				}
-			}
-		});
-		//if(projectFlag && projectFlag == 1 || projectFlag == 2) {
-			//设置按钮不能编辑
-			//disabledButTrue(true);
-		//}
-	}
-	//复制直接触发
-	if(isUpdateBool == 0) {
-		$('#photoName2').trigger("click");
-	}
+			});
+			//if(projectFlag && projectFlag == 1 || projectFlag == 2) {
+				//设置按钮不能编辑
+				//disabledButTrue(true);
+			//}
+		}
+		//复制直接触发
+		if(isUpdateBool == 0) {
+			$('#photoName2').trigger("click");
+		}
+	};
 	
 	$(function() {
 		$("#dg2").datagrid({
