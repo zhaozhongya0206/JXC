@@ -69,10 +69,10 @@
 		</div>
 	</div>
 	
-	<div id="dlg" class="easyui-dialog" style="text-align:center; margin: 0px auto;" fit="true" 
+	<div id="dlg" class="easyui-dialog" style="text-align:center; margin: 0px auto;" 
 		closed="true" buttons="#dlg-buttons" data-options="onClose:function(){resetValue()}">
 		<form id="fm" method="post" enctype="multipart/form-data">
-			<table cellspacing="45px" style="margin:auto;text-align:center">
+			<table cellspacing="50px" style="margin:auto;text-align:center">
 				<tr>
 					<td>相机编号：</td>
 					<td>
@@ -190,6 +190,15 @@
 	var fileBoolean=true;
 	$(function() {
 		// 初始化内容
+		var win_h = $(window).height();
+		var win_w = $(window).width();
+		var height = Math.floor(win_h * 0.8);
+		var width = Math.floor(win_w * 0.7);
+		$('#dlg').dialog({
+		    width: width,
+		    height: height
+		}).dialog("center");;
+		
 		$('#codeType').combobox({
 			onSelect: function(record){
 				debugger;

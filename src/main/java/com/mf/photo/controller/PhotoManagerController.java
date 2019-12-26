@@ -163,6 +163,8 @@ public class PhotoManagerController {
 				log.error("saveCustomer Exception: " + e.getMessage(), e);
 				throw new Exception(e);
 			}
+		} else if("H264文件流".equals(photoManager.getCodeType())){
+			photoManager.setFile(resultDto.getFile());
 		}
 		photoManagerService.save(photoManager);
 		logService.save(new Log(Log.ADD_ACTION, "添加或者修改相机设置信息" + photoManagerService.findById(photoManager.getId())));
