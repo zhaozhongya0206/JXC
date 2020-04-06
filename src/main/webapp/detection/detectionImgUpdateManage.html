@@ -60,8 +60,8 @@
 	            			<br>
 	            			<span><input id="videoSet2" type="radio" name="detectionType" style="width: 20px" value="2"/><label for="videoSet2">数字识别</label>
 								<input type="text" id="digitSectionSmall" name="digitSectionSmall" style="width: 70px;" 
-								onkeyup="clearNoNum(this)" onafterpaste="clearNoNum(this)" maxlength="6" />~<input type="text" id="digitSectionBig" name="digitSectionBig" style="width: 70px;" 
-								onkeyup="clearNoNum(this)" onafterpaste="clearNoNum(this)" maxlength="6"/></span>
+								onkeyup="clearNoNum(this)" onafterpaste="clearNoNum(this)" maxlength="11" />~<input type="text" id="digitSectionBig" name="digitSectionBig" style="width: 70px;" 
+								onkeyup="clearNoNum(this)" onafterpaste="clearNoNum(this)" maxlength="11"/></span>
 							<br/>
 							<br/>
 						</td>
@@ -261,7 +261,9 @@ window.onload = function() {
 	var listViewHeight = [];//用于保存画图高度坐标
     var listViewType = [];//用于保存绘制类型
     var listViewId =[];//用于保存id
-    
+
+	var listDeleteId = [];//用于保存删除id
+	
     //关闭页面开关
     var closeButtonBool=true;
     $(".fill").css({display:"none"});
@@ -305,12 +307,28 @@ window.onload = function() {
 				&& listHeight.length > 0 && listType.length > 0 && listId.length>0) {
 			//防止重复保存操作
 			saveDetectionImg(listX[0],listY[0],listWidth[0],listHeight[0],listType[0],listId[0]);
+			if(listDeleteId.length > 0) {
+				//var deleteId = listDeleteId.pop();
+				//deleteManagerId(deleteId, "");
+			}
 			return false;
 		} else if (listX.length > 0 && listY.length > 0 && listWidth.length > 0 
 				&& listHeight.length > 0 && listType.length > 0){
 			saveDetectionImg(listX[0],listY[0],listWidth[0],listHeight[0],listType[0]);
+			if(listDeleteId.length > 0) {
+				//var deleteId = listDeleteId.pop();
+				//deleteManagerId(deleteId, "");
+			}
+			return false;
 		} else {
-			$.messager.alert("温馨提示", "请进行绘制图形！");
+			if(listDeleteId.length <=0) {
+				$.messager.alert("温馨提示", "请进行绘制图形！");
+			}
+		}
+		if(listDeleteId.length > 0) {
+			var deleteId = listDeleteId.pop();
+			deleteManagerId(deleteId, "删除成功！");
+			return false;
 		}
     })
     function saveDetectionImg(leftX, leftY, widthDraw, heightDraw, typeDraw, id) {
@@ -467,7 +485,9 @@ window.onload = function() {
     	if(listId.length > 0) {
     		$.messager.confirm("系统提示", "是否删除该数据？", function(r) {
 				if (r) {
+					debugger;
 			    	var deleteId = listId.pop();
+			    	listDeleteId.push(deleteId);
 			    	arr.pop();
 			        obj.clearRect(0,0,width,height);
 			        /* if(arr.length>0){
@@ -478,26 +498,7 @@ window.onload = function() {
 			        listWidth.pop();
 			        listHeight.pop();
 			        listType.pop();
-			        $.ajax({
-						data : {
-							"ids" : deleteId
-						},
-						url : "/detection/manager/delete",
-						traditional : true,
-						dataType : "json",
-						type : 'POST',
-						success : function(result) {
-							if (result) {
-								debugger;
-								//$.messager.alert("系统提示", "操作成功！");
-								//重新刷新展示
-								//findDetectionByProjectId();
-								detectionCombobox();
-							} else {
-								$.messager.alert("系统提示", result.errorInfo);
-							}
-						}
-					});
+			        getListView();//重新展示画面
 				}
     		});
         } else {
@@ -562,6 +563,7 @@ window.onload = function() {
 			listWidth.push(w);//添加width坐标
 			listHeight.push(h);//添加height坐标
 			listType.push(type);//添加类型type
+			//listId = [];//先清除---------
 		}
 	}
 	function getListView() {
@@ -781,6 +783,28 @@ window.onload = function() {
 				if (result) {
 					debugger;
 					$("#fm").form("load", result);
+				} else {
+					$.messager.alert("系统提示", result.errorInfo);
+				}
+			}
+		});
+	}
+	function deleteManagerId(deleteId, messager) {
+		$.ajax({
+			data : {
+				"ids" : deleteId
+			},
+			url : "/detection/manager/delete",
+			traditional : true,
+			dataType : "json",
+			type : 'POST',
+			success : function(result) {
+				if (result) {
+					debugger;
+					listDeleteId = [];
+					if(messager) {
+						detectionCombobox();
+					}
 				} else {
 					$.messager.alert("系统提示", result.errorInfo);
 				}

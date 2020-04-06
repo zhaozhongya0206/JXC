@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -52,7 +54,10 @@ public class DataPlayServiceImpl implements DataPlayService {
 	
 	@Override
 	public List<ExceptionManager> list(ExceptionManager exceptionManager, Integer page, Integer pageSize, Direction direction, String... properties) {
-		Pageable pageable = new PageRequest(page-1,pageSize);
+		List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.ASC, "createTime"));
+        Sort sort = new Sort(orders);
+		Pageable pageable = new PageRequest(page-1, pageSize, sort);
 		Page<ExceptionManager> pageCustomer = dataPlayRepository.findAll(new Specification<ExceptionManager>() {
 			@Override
 			public Predicate toPredicate(Root<ExceptionManager> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
