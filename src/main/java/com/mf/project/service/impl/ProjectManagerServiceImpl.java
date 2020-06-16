@@ -90,13 +90,13 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
         	pm.setSampleCode((String)obj[10]);
         	pm.setSampleName((String)obj[11]);
         	pm.setPhotoName((String)obj[12]);
-        	Integer projectFlag = ((Integer)obj[13]);
+        	String projectFlag = ((String)obj[13]);
         	pm.setProjectFlag(projectFlag);
-        	if(projectFlag == 0) {
+        	if("0".equals(projectFlag)) {
         		pm.setProjectFlagName("未启用");
-        	} else if(projectFlag == 1) {
+        	} else if("1".equals(projectFlag)) {
         		pm.setProjectFlagName("进行中");
-        	} else if (projectFlag == 2) {
+        	} else if ("2".equals(projectFlag)) {
         		pm.setProjectFlagName("暂停");
         	} else {
         		pm.setProjectFlagName("结束");
@@ -137,6 +137,25 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 		BigInteger totalCount = (BigInteger) countQuery.getSingleResult();
 		return totalCount.longValue();
 		
+	}
+	
+	@Override
+	public Long getCountOne(ProjectManager projectManager) {
+		StringBuilder countSelectSql = new StringBuilder();
+		countSelectSql.append("SELECT count(1) FROM project_manager a where 1=1 ");
+        List<String> listParams = new ArrayList<String>();
+        StringBuilder whereSql = new StringBuilder();
+		if (StringUtil.isNotEmpty(projectManager.getProjectCode())) {
+			whereSql.append(" and a.project_code =? ");
+			listParams.add(projectManager.getProjectCode());
+		}
+		String countSql = new StringBuilder().append(countSelectSql).append(whereSql).toString();
+		Query countQuery = entityManager.createNativeQuery(countSql);
+		for (int i= 1; i<= listParams.size(); i++) {
+			countQuery.setParameter(i, listParams.get(i-1));
+		}
+		BigInteger totalCount = (BigInteger) countQuery.getSingleResult();
+		return totalCount.longValue();
 	}
 
 	@Override
@@ -196,11 +215,21 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 
 	@Override
 	@Transactional
-	public void updateFlag(Integer id, Integer projectFlag) {
+	public void updateFlag(Integer id, String projectFlag) {
 		log.info("updateFlag id:" + id +",projectFlag:" + projectFlag);
 		String jpql = "update project_manager set project_flag =:projectFlag where id =:id";
 	    Query query = entityManager.createNativeQuery(jpql);
 	    query.setParameter("projectFlag", projectFlag).setParameter("id",id);
+	    query.executeUpdate();
+	}
+	
+	@Override
+	@Transactional
+	public void updateJieShuFlag(Integer id) {
+		log.info("updateFlag id:" + id);
+		String jpql = "update project_manager set project_flag =:projectFlag where id =:id";
+	    Query query = entityManager.createNativeQuery(jpql);
+	    query.setParameter("projectFlag", "3").setParameter("id", id);
 	    query.executeUpdate();
 	}
 	

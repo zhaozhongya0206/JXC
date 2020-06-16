@@ -31,7 +31,7 @@ public class DataPlayController {
 			@RequestParam(value="rows",required=false)Integer rows, HttpServletRequest request)throws Exception{
 		log.info("list exceptionManager: " + exceptionManager.toString());
 		Map<String,Object> resultMap = new HashMap<>();
-		List<ExceptionManager> customerList = dataPlayService.list(exceptionManager, page, rows, Direction.ASC, "id");
+		List<ExceptionManager> customerList = dataPlayService.list(exceptionManager, page, rows, Direction.DESC, "id");
 		/*String path = request.getSession().getServletContext().getRealPath("/");
 		log.info("path: " + path);
 		for(ExceptionManager exceptionDto : customerList) {

@@ -404,6 +404,28 @@
 				});
 			}
 		});
+		//定时刷新
+	    setInterval(function(){
+	    	$.ajax({
+				url : "/admin/index/find",
+				traditional : true,
+				dataType : "json",
+				type : 'POST',
+				success : function(result) {
+					debugger;
+					if (result.success) {
+						initWebVideoCtrl();
+						for(var i=0; i<4; i++) {
+							if(result.list[i] != null) {
+								if(result.list[i].projectId !=null) {
+									$("#totalCount"+i).html(result.mapCount[result.list[i].projectId]);
+								}
+							}
+						}
+					}
+				}
+	    	});
+	    }, 30*1000);
 	});
 	//选中视频事件
 	function playVideo($this) {
@@ -550,7 +572,7 @@
 			$.ajax({
 				data : {
 					id : id,
-					projectFlag : 1
+					projectFlag : "1"
 				},
 				url : "/project/manager/updateFlag",
 				dataType : "json",
@@ -591,7 +613,7 @@
 			$.ajax({
 				data : {
 					id : id,
-					projectFlag : 2
+					projectFlag : "2"
 				},
 				url : "/project/manager/updateFlag",
 				dataType : "json",
@@ -634,7 +656,7 @@
 				$.ajax({
 					data : {
 						id : id,
-						projectFlag : 3
+						projectFlag : "3"
 					},
 					url : "/project/manager/updateFlag",
 					dataType : "json",
@@ -642,20 +664,22 @@
 					success : function(result) {
 						if (result.success) {
 							//window.location.reload();
-							debugger;
-							var projectFlagName = "结束";
-							$("#img_"+_index+"_kaishi").attr('src', "../img/kaishi_disable.png");
-							$("#img_"+_index+"_zanting").attr('src', "../img/zanting_disable.png");
-							$("#img_"+_index+"_jieshu").attr('src', "../img/jieshu_disable.png");
-							$("#img_"+_index+"_shezhi").attr('src', "../img/shezhi_disable.png");
-							
-							$("#a_"+_index+"_kaishi").addClass("disable_a");
-							$("#a_"+_index+"_zanting").addClass("disable_a");
-							$("#a_"+_index+"_jieshu").addClass("disable_a");
-							$("#a_"+_index+"_shezhi").addClass("disable_a");
-							$("#projectStatus"+_index).html(projectFlagName);
-							playVideoSelect(_index);
-							messagerShow();
+							//将相机置回执闲置
+							if (result.success) {
+								var projectFlagName = "结束";
+								$("#img_"+_index+"_kaishi").attr('src', "../img/kaishi_disable.png");
+								$("#img_"+_index+"_zanting").attr('src', "../img/zanting_disable.png");
+								$("#img_"+_index+"_jieshu").attr('src', "../img/jieshu_disable.png");
+								$("#img_"+_index+"_shezhi").attr('src', "../img/shezhi_disable.png");
+								
+								$("#a_"+_index+"_kaishi").addClass("disable_a");
+								$("#a_"+_index+"_zanting").addClass("disable_a");
+								$("#a_"+_index+"_jieshu").addClass("disable_a");
+								$("#a_"+_index+"_shezhi").addClass("disable_a");
+								$("#projectStatus"+_index).html(projectFlagName);
+								playVideoSelect(_index);
+								messagerShow();
+							}
 						} else {
 							$.messager.alert("系统提示", result.errorInfo);
 						}

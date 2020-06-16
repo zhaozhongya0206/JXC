@@ -28,6 +28,8 @@ public interface ProjectManagerService {
 	 */
 	public Long getCount(ProjectManager ProjectManager);
 	
+	public Long getCountOne(ProjectManager projectManager);
+	
 	/**
 	 * 添加或者修改信息
 	 * @param ProjectManager
@@ -52,7 +54,9 @@ public interface ProjectManagerService {
 	 * @param id
 	 * @param projectFlag
 	 */
-	public void updateFlag(Integer id, Integer projectFlag);
+	public void updateFlag(Integer id, String projectFlag);
+	
+	public void updateJieShuFlag(Integer id);
 	
 	
 	public void updatePhotoStatus(String photoCode, String photoStatus);

@@ -28,7 +28,7 @@ public class ProjectManager {
     private String exceptionEventTime;//录像时长（秒）
     private String projectUrl;//项目地址
     private String videoFileUrl;//视频文件路径
-    private Integer projectFlag=0;//项目标记（0 未启用（默认）  1 开始（默认） 2 暂停 3 结束）
+    private String projectFlag;//项目标记（0 未启用（默认）  1 开始（默认） 2 暂停 3 结束）
     private Timestamp createTime;//创建时间
     private Timestamp updateTime;//修改时间
     private String sampleCode;//样品编号
@@ -152,11 +152,11 @@ public class ProjectManager {
 	
     @Basic
     @Column(name = "project_flag")
-    public Integer getProjectFlag() {
+    public String getProjectFlag() {
 		return projectFlag;
 	}
 
-	public void setProjectFlag(Integer projectFlag) {
+	public void setProjectFlag(String projectFlag) {
 		this.projectFlag = projectFlag;
 	}
 

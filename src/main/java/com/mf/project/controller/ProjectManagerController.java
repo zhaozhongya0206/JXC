@@ -120,7 +120,7 @@ public class ProjectManagerController {
 		projectManager.setUpdateTime(new Timestamp(System.currentTimeMillis()));
 		if(projectManager.getId() != null){
 			ProjectManager dto = projectManagerService.findById(projectManager.getId());
-			if(1 == dto.getProjectFlag()) {
+			if("1".equals(dto.getProjectFlag())) {
 				resultMap.put("errorInfo", "该任务处于开始状态不能修改！");
 				resultMap.put("success", false);
 				return resultMap;
@@ -130,7 +130,7 @@ public class ProjectManagerController {
 			//根据项目编码查询是否已存在数据
 			ProjectManager dto = new ProjectManager();
 			dto.setProjectCode(projectManager.getProjectCode());
-			Long count = projectManagerService.getCount(dto);
+			Long count = projectManagerService.getCountOne(dto);
 			log.info("projectManagerService getCount: " + count);
 			if(count > 0) {
 				resultMap.put("errorInfo", "此委托单已存在！");
@@ -144,7 +144,7 @@ public class ProjectManagerController {
 				return resultMap;
 			}*/
 			//新增时设置默认值
-			projectManager.setProjectFlag(0);
+			projectManager.setProjectFlag("0");
 			logService.save(new Log(Log.ADD_ACTION,"添加项目设置信息"+projectManager));
 		}
 		projectManagerService.save(projectManager);
@@ -186,7 +186,7 @@ public class ProjectManagerController {
 		for(int i=0;i<idsStr.length;i++){
 			int id=Integer.parseInt(idsStr[i]);
 			ProjectManager dto = projectManagerService.findById(id);
-			if(1 == dto.getProjectFlag() || 2 == dto.getProjectFlag()) {
+			if("1".equals(dto.getProjectFlag()) || "2".equals(dto.getProjectFlag())) {
 				resultMap.put("errorInfo", "相机处于开始或暂停状态不能删除！");
 				resultMap.put("success", false);
 				return resultMap;
@@ -212,21 +212,21 @@ public class ProjectManagerController {
 	 * @throws Exception
 	 */
 	@RequestMapping("/updateFlag")
-	@RequiresPermissions(value="任务管理")
 	public Map<String,Object> updateFlag(ProjectManager projectManager)throws Exception{
-		log.info("updateFlag id: " + projectManager.getId() + ",projectFlag: " + projectManager.getProjectFlag()+ "PhotoCode: ," + projectManager.getPhotoCode());
+		log.info("修改项目标识 updateFlag id: " + projectManager.getId() + ",projectFlag: " + projectManager.getProjectFlag());
 		Map<String,Object> resultMap=new HashMap<>();
 		ProjectManager dto = projectManagerService.findById(projectManager.getId());
-		if(1 == projectManager.getProjectFlag() || 2== projectManager.getProjectFlag()) {
+		if("1".equals(projectManager.getProjectFlag()) || "2".equals(projectManager.getProjectFlag())) {
 			SampleManager sampleManager = sampleManagerService.findSample(String.valueOf(dto.getId()));
 			if(sampleManager == null) {
 				resultMap.put("errorInfo", "样品信息为空！");
 				resultMap.put("success", false);
 				return resultMap;
 			}
+			projectManagerService.updateFlag(projectManager.getId(), projectManager.getProjectFlag());
 		}
-		projectManagerService.updateFlag(projectManager.getId(), projectManager.getProjectFlag());
-		if(projectManager.getProjectFlag() == 3) {
+		if("3".equals(projectManager.getProjectFlag())) {
+			projectManagerService.updateJieShuFlag(projectManager.getId());
 			projectManagerService.updatePhotoStatus(dto.getPhotoCode(), "0");
 			//删除对应的相机截图图片
 			String webappRoot = this.getClass().getResource("/").getPath().replaceFirst("/", "").replaceAll("WEB-INF/classes", "");
@@ -237,10 +237,11 @@ public class ProjectManagerController {
 				file.delete();
 			}
 		}
+		resultMap.put("projectFlag", projectManager.getProjectFlag());
+		resultMap.put("photoCode", dto.getPhotoCode());
 		resultMap.put("success", true);
 		return resultMap;
 	}
-	
 	
 	@RequestMapping("/findById")
 	public ProjectManager findById(String id)throws Exception{

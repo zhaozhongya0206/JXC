@@ -190,13 +190,13 @@ a.disabled {
 				data : {"id" : row.id},
 				success : function(result) {
 					if (result) {
-						if(1 == result.projectFlag) {
+						if("1" == result.projectFlag) {
 							$.messager.alert("系统提示", "进行中不可修改！");
 							return false;
-						} else if(2 == result.projectFlag) {
+						} else if("2" == result.projectFlag) {
 							$.messager.alert("系统提示", "暂停中不可修改！");
 							return false;
-						} else if(3 == result.projectFlag) {
+						} else if("3" == result.projectFlag) {
 							$.messager.alert("系统提示", "已结束不可修改！");
 							return false;
 						} else {
@@ -357,7 +357,7 @@ a.disabled {
 							$.ajax({
 								data : {
 									id : id,
-									projectFlag : 1
+									projectFlag : "1"
 								},
 								url : "/project/manager/updateFlag",
 								dataType : "json",
@@ -388,7 +388,7 @@ a.disabled {
 				$.ajax({
 					data : {
 						id : id,
-						projectFlag : 2
+						projectFlag : "2"
 					},
 					url : "/project/manager/updateFlag",
 					dataType : "json",
@@ -409,7 +409,7 @@ a.disabled {
 			}
 		};
 		//跳转“结束”页面
-		function discontinueProject(id,photoCode) {
+		function discontinueProject(id) {
 			debugger;
 			if (id) {
 				$.messager.confirm("系统提示", "该条目一旦被结束后无法再被激活？", function(r) {
@@ -418,12 +418,13 @@ a.disabled {
 						$.ajax({
 							data : {
 								id : id,
-								projectFlag : 3
+								projectFlag : "3"
 							},
 							url : "/project/manager/updateFlag",
 							dataType : "json",
 							type : 'POST',
 							success : function(result) {
+								debugger;
 								if (result.success) {
 									$.messager.alert("系统提示", "操作成功！");
 									$("#dg").datagrid("reload");
